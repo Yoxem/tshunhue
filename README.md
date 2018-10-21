@@ -46,7 +46,7 @@
     * num: 數字
         * int：整數型，signed i64。
         * float：浮點數，double presision。
-   * bool：布爾，i1
+   * bool：布爾，i1。
    * void：不傳回或輸入值，或是代表函數沒有自變數（如 `(void -> void)`）。
    * fun：函數。可以用 `(any -> Any)`, `(num, num -> bool)`, `(int -> void)`, `forall A, B, C in num, (A, B -> C)`來表示。[1]
    * (union A B) A B 型別的聯集（以後再實做）。
