@@ -24,6 +24,10 @@
 ## BNF 表示法
 （待補完）
 
+## Parser：
+* [70 行 Python 代码编写一个递归下降解析器](https://www.oschina.net/translate/how-to-write-a-calculator-in-70-python-lines-by-writing-a-recursive-descent-parser?print)
+* [遞迴下降 OR 遞歸下降 Python - Google 搜尋](https://www.google.com/search?client=firefox-b-ab&ei=V9jMW4L7HceB8gXj6JGoDQ&q=%E9%81%9E%E8%BF%B4%E4%B8%8B%E9%99%8D+OR+%E9%81%9E%E6%AD%B8%E4%B8%8B%E9%99%8D+Python&oq=%E9%81%9E%E8%BF%B4%E4%B8%8B%E9%99%8D+OR+%E9%81%9E%E6%AD%B8%E4%B8%8B%E9%99%8D+Python&gs_l=psy-ab.3...3677.3677.0.3855.1.1.0.0.0.0.47.47.1.1.0....0...1c.1.64.psy-ab..0.0.0....0.SD09rz1x3RA)
+
 實做方式
 ------------
 用 Python3 將原始碼轉成 AST，以 s-expression 表示。再進行型別推測後，轉成 CPS 風格（問題：需不需要第二次型別轉換呢？），利用 llvmlite 生成 LLVM IR，最後使用 。
