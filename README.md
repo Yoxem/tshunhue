@@ -93,6 +93,7 @@
 * [NLTK Logic 1 : First Order Logic and Semantics - Mark Chang's Blog](https://ckmarkoh.github.io/blog/2014/03/13/python-nltk-logic-1/)
 * [謂詞邏輯、一階邏輯與「哥德爾完備定理」](http://programmermagazine.github.io/201403/htm/focus3.html)
 * [Prolog 入門 (作者： KuoE0)](https://programmermagazine.github.io/201308/htm/article3.html#prolog-%E5%85%A5%E9%96%80-%E4%BD%9C%E8%80%85-kuoe0)
+* [布林邏輯與公理系統 - 把數學程式化 -- 使用 JavaScript 的 Rlab 套件](https://ccckmit.gitbooks.io/rlab/content/axiom.html)
 
 ### 閉包
 可以用接收 scope 外變數的物件加上自己的方法來模擬。
