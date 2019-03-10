@@ -24,6 +24,13 @@
       <version>4.11</version>
       <scope>test</scope>
     </dependency>
+<!-- may be used to generate llvm in the future-->
+<!-- https://mvnrepository.com/artifact/org.bytedeco.javacpp-presets/llvm -->
+  <dependency>
+    <groupId>org.bytedeco.javacpp-presets</groupId>
+      <artifactId>llvm</artifactId>
+      <version>7.0.1-1.4.4</version>
+    </dependency>
   </dependencies>
 
   <build>
