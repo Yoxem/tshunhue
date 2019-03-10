@@ -1,4 +1,6 @@
 # !/usr/bin/env python3
+from copy import copy
+
 start_point = 1
 '''graph_list = list of links represented by (orig, dest, value)'''
 graph_list = [(1, 2, "a"), 
@@ -125,7 +127,7 @@ class NFA():
     
     def __repr__(self):
         return_string = ""
-        return_string += "Start:\n"
+        return_string += "Start: %d\n" % self.start
         
         if self.graph == []:
             return_string += "EMPTY PATH"
@@ -150,12 +152,13 @@ def make_simple_nfa(pattern):
     return nfa
 
 def nfa_concat(nfa1, nfa2):
+    """xy"""
     new_nfa = NFA()
-    new_nfa.start = nfa1.start
+    new_nfa.start = copy(nfa1.start)
 
     connectting_point_pair = [nfa1.end, nfa2.start]
     
-    new_graph = nfa1.graph
+    new_graph = copy(nfa1.graph)
     new_end = []
     for path in nfa2.graph:
         if path[0] == connectting_point_pair[1]:
@@ -176,16 +179,18 @@ def nfa_concat(nfa1, nfa2):
     return new_nfa
 
 def nfa_or(nfa1, nfa2):
+    """x|y"""
     new_nfa = NFA()
-    new_nfa.start = nfa1.start
+    new_nfa.start = copy(nfa1.start)
 
-    new_end = nfa1.end
+    new_end = copy(nfa1.end)
     
-    new_graph = nfa1.graph
+    new_graph = copy(nfa1.graph)
 
     for path in nfa2.graph:
         if path[0] == nfa2.start:
-            new_graph.append(tuple([nfa1.start] + list(path[1:3])))
+            appended_link = tuple([nfa1.start] + list(path[1:3]))
+            new_graph.append(appended_link)
         else:
             new_graph.append(path)
     
@@ -200,6 +205,40 @@ def nfa_or(nfa1, nfa2):
 
     return new_nfa
 
+def nfa_repeat_or_none(nfa1, nfa2):
+    """xy*"""
+    new_nfa = NFA()
+    new_nfa.start = copy(nfa1.start)
+    new_nfa.end = copy(nfa1.end)
+
+    new_graph = copy(nfa1.graph)
+
+    for path in nfa2.graph:
+        temp_links = []
+
+        if path[0] == nfa2.start:
+            for new_link_orig in nfa1.end:
+                appended_link = tuple([new_link_orig] + list(path[1:]))
+                temp_links.append(appended_link)
+        else:
+            temp_links = [path]
+    
+        generated_new_links = []
+        for link in temp_links:
+            if link[1] in nfa2.end:
+                for new_link_end in nfa1.end:
+                    appended_link = tuple([link[0]]+[new_link_end]+[link[2]])
+                    generated_new_links.append(appended_link)
+            else:
+                generated_new_links.append(link)
+
+    new_graph += generated_new_links
+    new_nfa.graph = new_graph
+    
+    return new_nfa
+
 nfa1 = make_simple_nfa("a")
 nfa2 = make_simple_nfa(("NOT", "b"))
-print(nfa_or(nfa1, nfa2))
+nfa3 = nfa_or(nfa1, nfa2)
+print(nfa3)
+print(nfa_repeat_or_none(nfa1, nfa2))
