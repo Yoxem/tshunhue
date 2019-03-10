@@ -116,3 +116,7 @@
 採用引用計數法，使用不可變物件的概念，使用 table 紀錄位址引用次數。
 
 函數區塊 call variable 則 count + 1；函數區塊執行結束則 count - 1。變數指定的位址改變時，`a = count[old_ptr]; count[old_ptr] = 0; count[new_ptr] = a`。
+
+LLVM IR 生成
+--------------------
+未來可能用到，雖然初期應該是先建立 C code。 https://github.com/bytedeco/javacpp-presets/tree/master/llvm
