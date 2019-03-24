@@ -205,6 +205,29 @@ def nfa_or(nfa1, nfa2):
 
     return new_nfa
 
+def nfa_once_or_none(nfa1, nfa2):
+    """"xy?"""
+    new_nfa = NFA()
+    new_nfa.start = copy(nfa1.start)
+    new_nfa.end = nfa1.end + nfa2.end
+
+    new_graph = copy(nfa1.graph)
+    for path in nfa2.graph:
+        generated_links = []
+
+        if path[0] == nfa2.start:
+            for new_link_orig in nfa1.end:
+                appended_link = tuple([new_link_orig] + list(path[1:]))
+                generated_links.append(appended_link)
+        else:
+            generated_links = [path]
+
+    new_graph += generated_links
+    new_nfa.graph = new_graph
+
+    return new_nfa
+
+
 def nfa_repeat_or_none(nfa1, nfa2):
     """xy*"""
     new_nfa = NFA()
@@ -242,3 +265,4 @@ nfa2 = make_simple_nfa(("NOT", "b"))
 nfa3 = nfa_or(nfa1, nfa2)
 print(nfa3)
 print(nfa_repeat_or_none(nfa1, nfa2))
+print(nfa_once_or_none(nfa1, nfa2))
