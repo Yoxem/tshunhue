@@ -58,3 +58,6 @@
 (unify '(%A %B %C) '(%B %C 3))
 (unify '(%A %B %C) '(3 (86 (C %B)) %A))
 (unify '(%A %B %C %B) '(3 %C %A 6))
+(unify '(%A (%B "example") %C %B) '(3 (%C %D) %A %B))
+(unify '(%A (%B ("example" %D)) %C %B) '(3 (%C %D) %A %B))
+(unify '(%A (%B ("example" %D 12)) %C %B) '(3 (%C %D) %A %B))
