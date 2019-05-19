@@ -2,6 +2,8 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
+#define UNSIGNED_INT_MAX 4294967295
+
 typedef struct bigNum{
     bool isNotNeg;
     int length;
@@ -116,6 +118,80 @@ BigNum shiftRightOnce(BigNum num){
   }
 }
 
+// |a| + |b|. a must be greater than b. 
+BigNum absAdd(BigNum a, BigNum b){
+  BigNum result;
+  if (a.length > b.length){
+    result.length = a.length;
+  }
+  else {
+    result.length = b.length;
+  }
+
+  unsigned int carry = 0;
+
+  for (int i=0; i < result.length; i++){
+    unsigned int b_array_i;
+    if (i >= b.length){
+      b_array_i = 0;
+    }
+    else{
+      b_array_i = b.array[i];
+    }
+    result.array[i] = (a.array[i] + b_array_i + carry) % UNSIGNED_INT_MAX;
+
+    carry = (a.array[i] + b_array_i+ carry) / UNSIGNED_INT_MAX;
+  }
+
+  if (carry > 0){
+    result.length += 1;
+    result.array[result.length-1] = carry;
+  }
+
+  return result;
+}
+
+BigNum absSubtract(BigNum a, BigNum b){
+  BigNum result;
+  result.length = a.length;
+  for (int i=0; i < result.length; i++){
+
+    unsigned int b_array_i;
+    if (i >= b.length){
+      b_array_i = 0;
+    }
+    else{
+      b_array_i = b.array[i];
+    }
+    
+    if (a.array[i] < b_array_i){
+      a.array[i+1] -= 1;
+      
+      result.array[i] = a.array[i] - (UNSIGNED_INT_MAX - b_array_i);
+    }
+    else{
+      result.array[i] = a.array[i] - b_array_i;
+    }
+
+    for(int i=result.length-1; i >= 0; i--){
+      if (result.array[i] > 0){
+        break;
+      }
+      else{
+        if (i > 0){
+          result.array = realloc(result.array, result.length - 1);
+          result.length -= 1;
+        }
+      }
+    }
+
+    
+  }
+  
+  return result;
+}
+
+
 // << 1
 BigNum shiftLeftOnce(BigNum num){
   unsigned int lastItem = num.array[num.length-1];
@@ -158,6 +234,8 @@ BigNum shiftRight(BigNum num, int n){
 
   return num;
 }
+
+
 
 int main(void){
     BigNum a = int_to_BigNum(-12345);
