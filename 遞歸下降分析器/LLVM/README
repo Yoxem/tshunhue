@@ -1,0 +1,9 @@
+=========
+Converting LLVM IR to an executable file
+=========
+clang++ -S -emit-llvm a.cpp // get llvm ir
+llc a.ll -filetype=obj // get .o file
+g++ -o a.out a.o // converting to executable file
+./a.out
+echo $? // get the return value of a.out
+
