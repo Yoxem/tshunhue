@@ -7,3 +7,8 @@ g++ -o a.out a.o // converting to executable file
 ./a.out
 echo $? // get the return value of a.out
 
+=========
+See also
+=========
+http://llvmlite.pydata.org/en/latest/
+https://mapping-high-level-constructs-to-llvm-ir.readthedocs.io/en/latest/
