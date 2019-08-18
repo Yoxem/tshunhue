@@ -1,4 +1,4 @@
-// package nfatree;
+// package NFAGraph;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -18,12 +18,12 @@ class NFAException extends Exception
 }
 
 /*
-* structure for NFATree
+* structure for NFAGraph
 */
-class NFATree{
+class NFAGraph{
     private Integer start;
     private ArrayList<Integer> endList; // List of end node num.
-    private ArrayList<NFATreePath> graphTable; // graph shown as table
+    private ArrayList<NFAGraphPath> graphTable; // graph shown as table
 
     public String toString(){
         String returnString = "";
@@ -61,7 +61,7 @@ class NFATree{
         return this.start;
     }
 
-    public ArrayList<NFATreePath> getGraphTable(){
+    public ArrayList<NFAGraphPath> getGraphTable(){
         return this.graphTable;
     }
 
@@ -73,21 +73,21 @@ class NFATree{
         this.start = startId;
     }
 
-    public addGraphPath(NFATreePath path){
+    public addGraphPath(NFAGraphPath path){
         this.graphTable.add(path);
     }
 
 
     public static void main(String[] args) {
-        NFATree _a = new NFATree();
+        NFAGraph _a = new NFAGraph();
         _a.start = 1;
-        NFATreePath p1 = new NFATreePath(1, 2, "a");
-        NFATreePath p2 = new NFATreePath(2, 3, "g");
-        NFATreePath p3 = new NFATreePath(2, 4, "c");
+        NFAGraphPath p1 = new NFAGraphPath(1, 2, "a");
+        NFAGraphPath p2 = new NFAGraphPath(2, 3, "g");
+        NFAGraphPath p3 = new NFAGraphPath(2, 4, "c");
 
         Tree<String> pattern = new Tree<String>("SET");
         pattern.appendChildrenList(Arrays.asList("F", "G", "H"));
-        NFATreePath p4 = new NFATreePath(2, 5, pattern);
+        NFAGraphPath p4 = new NFAGraphPath(2, 5, pattern);
 
         _a.graphTable.add(p1);
         _a.graphTable.add(p2);
@@ -105,22 +105,22 @@ class NFATree{
 
     }
 
-    public NFATree(int orig, int dest, NFATreePath path){
+    public NFAGraph(int orig, int dest, NFAGraphPath path){
         this.start = (Integer) orig;
         this.endList = new ArrayList<Integer>(Arrays.asList((Integer) dest));
-        this.graphTable = new ArrayList<NFATreePath>(Arrays.asList(path));
+        this.graphTable = new ArrayList<NFAGraphPath>(Arrays.asList(path));
     }
 
-    public NFATree(){
+    public NFAGraph(){
         this.start = (Integer)-1 ; // impossible value
         this.endList = new ArrayList<Integer>();
-        this.graphTable = new ArrayList<NFATreePath>();
+        this.graphTable = new ArrayList<NFAGraphPath>();
     }
 
-    public NFATree(int orig, ArrayList<Integer> destList, NFATreePath path){
+    public NFAGraph(int orig, ArrayList<Integer> destList, NFAGraphPath path){
         this.start = (Integer)orig;
         this.endList = destList;
-        this.graphTable = new ArrayList<NFATreePath>(Arrays.asList(path));
+        this.graphTable = new ArrayList<NFAGraphPath>(Arrays.asList(path));
     }
 
     /* return a Hashtable in the form of:
@@ -268,25 +268,25 @@ class NFATree{
 }
 
 /*
-* Path for NFATree.graph
+* Path for NFAGraph.graph
 * [2]-- a ->[3]
 * orig = 2;
 * dest = 3;
 * patt = ['a'];
 */
-class NFATreePath {
+class NFAGraphPath {
     private Integer orig;
     private Integer dest;
     private Tree<String> patt;
 
-    public NFATreePath(int ori, int des, String ptn) {
+    public NFAGraphPath(int ori, int des, String ptn) {
         this.orig = (Integer) ori;
         this.dest = (Integer) des;
         this.patt = new Tree<String>(ptn);
 
     }
 
-    public NFATreePath(int ori, int des, Tree<String> ptnTree) {
+    public NFAGraphPath(int ori, int des, Tree<String> ptnTree) {
         this.orig = (Integer) ori;
         this.dest = (Integer) des;
         this.patt = ptnTree;
@@ -320,55 +320,55 @@ class NfaManipulation{
         return retId;
     }
 
-    public NFATree makeSimpleNFA(String pattern){
+    public NFAGraph makeSimpleNFA(String pattern){
         Integer start = this.nextId();
         Integer end = this.nextId();
-        NFATreePath path = NFATreePath(start, end, pattern);
-        NFATree nfa = NFATree(start, end, path);
+        NFAGraphPath path = NFAGraphPath(start, end, pattern);
+        NFAGraph nfa = NFAGraph(start, end, path);
         return nfa;
     }
 
-    public NFATree makeSimpleNFA(Tree<String> pattern){
+    public NFAGraph makeSimpleNFA(Tree<String> pattern){
         Integer start = this.nextId();
         Integer end = this.nextId();
-        NFATreePath path = NFATreePath(start, end, pattern);
-        NFATree nfa = NFATree(start, end, path);
+        NFAGraphPath path = NFAGraphPath(start, end, pattern);
+        NFAGraph nfa = NFAGraph(start, end, path);
         return nfa;
     }
 
     /**
     * xy
     */
-    public nfaConcat(NFATree nfa1, NFATree nfa2){
+    public nfaConcat(NFAGraph nfa1, NFAGraph nfa2){
         Integer nfa1Start = nfa1.getStart();
         ArrayList<Integer> nfa1EndList = nfa1.getEndList();
         
-        ArrayList<NFATreePath> nfa1NFATreeList = nfa1.getGraphTable();
-        ArrayList<NFATreePath> nfa2NFATreeList = nfa2.getGraphTable();
+        ArrayList<NFAGraphPath> nfa1NFAGraphList = nfa1.getGraphTable();
+        ArrayList<NFAGraphPath> nfa2NFAGraphList = nfa2.getGraphTable();
 
-        NFATree resultNFA = new NFATree();
+        NFAGraph resultNFA = new NFAGraph();
 
         resultNFA.setStart(nfa1Start);
 
-        concatNFAGraph(nfa2, nfa1EndList, nfa1NFATreeList, nfa2NFATreeList, resultNFA);
+        concatNFAGraph(nfa2, nfa1EndList, nfa1NFAGraphList, nfa2NFAGraphList, resultNFA);
 
         resultNFA.setEndList(nfa2.getEndList());
         return resultNFA;
     }
 
-    private void concatNFAGraph(NFATree nfa2, ArrayList<Integer> nfa1EndList, ArrayList<NFATreePath> nfa1NFATreeList,
-            ArrayList<NFATreePath> nfa2NFATreeList, NFATree resultNFA) {
-        for(int i=0; i<nfa1NFATreeList.size();i++){
-            resultNFA.addGraphPath(nfa1NFATreeList.get(i));
+    private void concatNFAGraph(NFAGraph nfa2, ArrayList<Integer> nfa1EndList, ArrayList<NFAGraphPath> nfa1NFAGraphList,
+            ArrayList<NFAGraphPath> nfa2NFAGraphList, NFAGraph resultNFA) {
+        for(int i=0; i<nfa1NFAGraphList.size();i++){
+            resultNFA.addGraphPath(nfa1NFAGraphList.get(i));
         }
 
         for(int i=0; i<nfa1EndList.size();i++){
-            for (int j=0; i<nfa2NFATreeList.size();j++){
-                NFATreePath path = nfa2NFATreeList.get(j);
+            for (int j=0; i<nfa2NFAGraphList.size();j++){
+                NFAGraphPath path = nfa2NFAGraphList.get(j);
 
                 if(path.getOrig() == (Integer) nfa1EndList.get(i)){
-                    NFATreePath newPath =
-                        new NFATreePath(nfa2.getStart(), path.getDest(), path.getPatt());
+                    NFAGraphPath newPath =
+                        new NFAGraphPath(nfa2.getStart(), path.getDest(), path.getPatt());
                     resultNFA.addGraphPath(newPath);
                 }
                 else{
@@ -381,29 +381,29 @@ class NfaManipulation{
     /**
     * x | y
     */
-    public nfaOr(NFATree nfa1, NFATree nfa2){
+    public nfaOr(NFAGraph nfa1, NFAGraph nfa2){
         Integer nfa1Start = nfa1.getStart();
         Integer nfa2Start = nfa2.getStart();
 
         ArrayList<Integer> nfa1EndList = nfa1.getEndList();
         ArrayList<Integer> nfa2EndList = nfa2.getEndList();
 
-        ArrayList<NFATreePath> nfa1NFATreeList = nfa1.getGraphTable();
-        ArrayList<NFATreePath> nfa2NFATreeList = nfa2.getGraphTable();
+        ArrayList<NFAGraphPath> nfa1NFAGraphList = nfa1.getGraphTable();
+        ArrayList<NFAGraphPath> nfa2NFAGraphList = nfa2.getGraphTable();
 
-        NFATree resultNFA = new NFATree();
+        NFAGraph resultNFA = new NFAGraph();
         resultNFA.setStart(nfa1Start);
         ArrayList<Integer> NewEndList = nfa1EndList;
 
-        for(int i=0; i<nfa1NFATreeList.size();i++){
-            resultNFA.addGraphPath(nfa1NFATreeList.get(i));
+        for(int i=0; i<nfa1NFAGraphList.size();i++){
+            resultNFA.addGraphPath(nfa1NFAGraphList.get(i));
         }
 
-        for(int i=0;i<nfa2NFATreeList.size();i++){
-            NFATreePath path = nfa2NFATreeList.get(i);
+        for(int i=0;i<nfa2NFAGraphList.size();i++){
+            NFAGraphPath path = nfa2NFAGraphList.get(i);
 
             if(path.getOrig() == nfa2Start){
-                NFATreePath newPath = new NFATreePath(nfa1Start, path.getDest(), path.getPatt());
+                NFAGraphPath newPath = new NFAGraphPath(nfa1Start, path.getDest(), path.getPatt());
                 resultNFA.addGraphPath(newPath);
             }
             else{
@@ -428,8 +428,8 @@ class NfaManipulation{
     /**
      * xy?
      */
-    public NFATree nfaOnceOrNone(NFATree nfa1, NFATree nfa2){
-        NFATree resultNFA = new NFATree();
+    public NFAGraph nfaOnceOrNone(NFAGraph nfa1, NFAGraph nfa2){
+        NFAGraph resultNFA = new NFAGraph();
         resultNFA.setStart(nfa1.getStart());
 
         ArrayList<Integer> resultNFAEndList = nfa1.getEndList();
@@ -455,8 +455,8 @@ class NfaManipulation{
     /**
      * xy*
      */
-    public NFATree nfaRepeatOrNone(NFATree nfa1, NFATree nfa2){
-        NFATree resultNFA = new NFATree();
+    public NFAGraph nfaRepeatOrNone(NFAGraph nfa1, NFAGraph nfa2){
+        NFAGraph resultNFA = new NFAGraph();
 
         resultNFA.setEndList(nfa1.getEndList());
         resultNFA.setStart(nfa1.getStart());
@@ -474,7 +474,7 @@ class NfaManipulation{
             Integer currentNfa1End = nfa1EndList.get(i);
             
             for(int j=0;j<nfa2.getGraphTable().size();j++){
-                NFATreePath path = nfa2.getGraphTable().get(j);
+                NFAGraphPath path = nfa2.getGraphTable().get(j);
                 
                 Integer pathOrig = path.getOrig();
                 Integer pathDest = path.getDest();
@@ -487,7 +487,7 @@ class NfaManipulation{
                     pathDest = currentNfa1End;
                 }
 
-                path = new NFATreePath((int)pathOrig,(int) pathDest, path.getPatt());
+                path = new NFAGraphPath((int)pathOrig,(int) pathDest, path.getPatt());
 
                 if (!resultNFA.getGraphTable().contains(path)){
                     resultNFA.addGraphPath(path);
@@ -502,45 +502,5 @@ class NfaManipulation{
 }
     
 /*
-    '''       
-
-def nfa_repeat_or_none(nfa1, nfa2):
-    """xy*"""
-    new_nfa = NFA()
-    new_nfa.start = copy(nfa1.start)
-    new_nfa.end = copy(nfa1.end)
-
-    new_graph = copy(nfa1.graph)
-
-    for path in nfa2.graph:
-        temp_links = []
-
-        if path[0] == nfa2.start:
-            for new_link_orig in nfa1.end:
-                appended_link = tuple([new_link_orig] + list(path[1:]))
-                temp_links.append(appended_link)
-        else:
-            temp_links = [path]
-    
-        generated_new_links = []
-        for link in temp_links:
-            if link[1] in nfa2.end:
-                for new_link_end in nfa1.end:
-                    appended_link = tuple([link[0]]+[new_link_end]+[link[2]])
-                    generated_new_links.append(appended_link)
-            else:
-                generated_new_links.append(link)
-
-    new_graph += generated_new_links
-    new_nfa.graph = new_graph
-    
-    return new_nfa
-
-nfa1 = make_simple_nfa("a")
-nfa2 = make_simple_nfa(("NOT", "b"))
-nfa3 = nfa_or(nfa1, nfa2)
-print(nfa3)
-print(nfa_repeat_or_none(nfa1, nfa2).graph)
-print(nfa_once_or_none(nfa1, nfa2).graph)
 
 */
