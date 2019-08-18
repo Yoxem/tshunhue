@@ -125,7 +125,7 @@ class NFA():
         self.end = []
         self.graph = [] # list of triary tuple
     
-    '''def __repr__(self):
+    def __repr__(self):
         return_string = ""
         return_string += "Start: %d\n" % self.start
         
@@ -141,7 +141,7 @@ class NFA():
         return_string += end_string
         
         return return_string
-    '''        
+            
 def make_simple_nfa(pattern):
     nfa = NFA()
     nfa.start = next(real_id_generator)
@@ -209,7 +209,7 @@ def nfa_once_or_none(nfa1, nfa2):
     """"xy?"""
     new_nfa = NFA()
     new_nfa.start = copy(nfa1.start)
-    new_nfa.end = nfa1.end + filter(lambda x : x != nfa2.start,nfa2.end)
+    new_nfa.end = nfa1.end + nfa2.end
 
     new_graph = copy(nfa1.graph)
     for path in nfa2.graph:
@@ -264,5 +264,5 @@ nfa1 = make_simple_nfa("a")
 nfa2 = make_simple_nfa(("NOT", "b"))
 nfa3 = nfa_or(nfa1, nfa2)
 print(nfa3)
-print(nfa_repeat_or_none(nfa1, nfa2).graph)
-print(nfa_once_or_none(nfa1, nfa2).graph)
+print(nfa_repeat_or_none(nfa1, nfa2))
+print(nfa_once_or_none(nfa1, nfa2))
