@@ -10,7 +10,7 @@ typedef struct bigNum{
     unsigned int * array;
 }  BigNum;
 
-BigNum int_to_BigNum(int i){
+BigNum intToBigNum(int i){
   BigNum  bigNum;
   bigNum.length = 1;
   bigNum.array =  (unsigned int*) malloc(sizeof(int) * 1);
@@ -115,6 +115,61 @@ BigNum shiftRightOnce(BigNum num){
     }
 
     return num;
+  }
+}
+
+BigNum Subtract(BigNum lhs, BigNum rhs){
+  // lhs - 0 = lhs
+  if (bigNumEqual(rhs, intToBigNum(0))){
+    return lhs;
+  }
+  // lhs - rhs = lhs + (- rhs) = lhs - new_rhs
+  else{
+    BigNum new_rhs = rhs;
+    new_rhs.isNotNeg = not(new_rhs.isNotNeg);
+    return Add(lhs, new_rhs);
+    }
+  }
+
+// the real "add function"
+BigNum Add(BigNum lhs, BigNum rhs){
+  if (lhs.isNotNeg == true && rhs.isNotNeg == true){
+    BigNum result;
+    result = absAdd(lhs, rhs);
+    result.isNotNeg = true;
+    return result;
+  }
+  else if(lhs.isNotNeg == false && rhs.isNotNeg == false){
+    BigNum result;
+    result = absAdd(lhs, rhs);
+    result.isNotNeg = false;
+    return result;
+  }
+  else if(lhs.isNotNeg == true && rhs.isNotNeg == false){
+    BigNum result;
+    if (bigNumAbsGreaterThan(lhs, rhs) && bigNumAbsEqual(lhs, rhs)){
+      result = absSubtract(lhs, rhs);
+      result.isNotNeg = true;
+      return result;
+    }
+    else{
+      result = absSubtract(rhs, lhs);
+      result.isNotNeg = false;
+      return result;
+    }
+  }
+  else{
+    BigNum result;
+    if (bigNumAbsGreaterThan(rhs, lhs) && bigNumAbsEqual(rhs, lhs)){
+      result = absSubtract(rhs, lhs);
+      result.isNotNeg = true;
+      return result;
+    }
+    else{
+      result = absSubtract(lhs, rhs);
+      result.isNotNeg = false;
+      return result;
+    }
   }
 }
 
@@ -238,9 +293,9 @@ BigNum shiftRight(BigNum num, int n){
 
 
 int main(void){
-    BigNum a = int_to_BigNum(-12345);
-    BigNum b = int_to_BigNum(-74892074);
-    BigNum g = int_to_BigNum(4294967296/2-1);
+    BigNum a = intToBigNum(-12345);
+    BigNum b = intToBigNum(-74892074);
+    BigNum g = intToBigNum(4294967296/2-1);
     g = shiftLeft(g, 3);
     g = shiftRight(g, 3);
 
