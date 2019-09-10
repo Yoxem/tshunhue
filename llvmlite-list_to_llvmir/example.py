@@ -1,6 +1,3 @@
-from ctypes import CFUNCTYPE, c_int
-import sys
-
 import llvmlite.ir as ll
 import llvmlite.binding as llvm
 
