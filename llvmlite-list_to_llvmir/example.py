@@ -1,6 +1,3 @@
-from ctypes import CFUNCTYPE, c_int
-import sys
-
 import llvmlite.ir as ll
 import llvmlite.binding as llvm
 
@@ -73,7 +70,7 @@ irbuilder = ll.IRBuilder(bb_entry)
 ret_val = transverse(ast, irbuilder)
 
 
-ret = irbuilder.ret(ret_val)
+ret = irbuilder.ret(ll.IntType(64)(0))
 
 
 print(module)
