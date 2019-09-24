@@ -1,0 +1,100 @@
+=============
+型別
+=============
+
+簡單型別
+=============
+
+數字
+-------------
+
+* `int`：整數，初期可用 64 位元帶符號整數處理，之後可用任意精度整數處理。
+** `p_int`：正整數
+** `n_int`：負整數
+** `z_int`：零整數 
+* `dou`：雙精度浮點數
+
+字串
+-------------
+* `str`：字串
+
+..note :: 無 char 型別
+
+
+布林
+------------
+* `bool`：布林值。true：真值，false：假值。
+
+複雜型別
+=============
+
+可以 `typedef` 自定義 struct（結構）與 union 型別。
+
+
+結構
+------------
+類似 Scheme 的紀錄 (record)。可儲存閉包型別。
+
+
+..
+
+  typedef human = struct{str name, int age};
+
+  human jack = human{name="Jack", age=32};
+
+可定義空 struct，和參數化型別：
+
+..
+
+  typedef nil = struct {}; # 空型別
+  para_struct a b = struct{
+                       a item1,
+                       b item2}; # 參數化多態型別
+
+文法大致為：
+
+..
+  struct{[type item]*}
+
+
+聯集
+-----------------
+標籤聯合。使用 `|` 聯集型別。不可儲存閉包型別。
+
+..
+
+  typedef food = apple | orange;
+
+  typedef nil = struct;
+  typedef cons a = struct{
+                       a head,
+                       (cons a) tail};
+  typedef list a = (cons a) | nil;
+
+
+函數型別
+================
+
+定義以下兩個型別僅為函數定義中使用：
+
+* `any`：指任何**非閉包**簡單型別及任何 `struct` 與 `union` 型別，參數化多態使用。
+* `void`：用於函數輸入與返回值，表不輸入或返回。
+
+函數定義如下：
+
+..
+  basic_type = simple_type | union_type | struct_type
+  simple_fun_type = (-> input output)
+  input_type = input_type_simple | (input_type_simple input_type_simple+) | void
+  input_type_simple = basic_type | simple_fun_type
+  output_type = input_type_simple | void
+  
+  overload_type = (typeof simple_fun_type+)
+
+  para_type = (para ((type_var+) in set_type) (-> para_input_type para_output_type))
+  set_type = basic_type | any
+
+  para_input_type_simple = input_type_simple | type_var
+  para_input_type = para_input_type_simple | (para_input_type_simple para_input_type_simple+) | void
+  para_output_type = output_type | type_var
+  
