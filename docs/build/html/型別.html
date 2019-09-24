@@ -77,11 +77,11 @@
 </div></blockquote>
 <p>可定義空 struct，和參數化型別：</p>
 <blockquote>
-<div><p>typedef nil = struct {}; # 空型別
-para_struct a b = struct{</p>
+<div><p>typedef nil = struct {}; # 空型別</p>
+<p>para_struct a b = struct{</p>
 <blockquote>
-<div><p>a item1,
-b item2}; # 參數化多態型別</p>
+<div><p>a item1,</p>
+<p>b item2}; # 參數化多態型別</p>
 </div></blockquote>
 </div></blockquote>
 <p>文法大致為：</p>
@@ -91,12 +91,12 @@ b item2}; # 參數化多態型別</p>
 <p>標籤聯合。使用 <cite>|</cite> 聯集型別。不可儲存閉包型別。</p>
 <blockquote>
 <div><p>typedef food = apple | orange;</p>
-<p>typedef nil = struct;
-typedef cons a = struct{</p>
-<blockquote>
-<div><p>a head,
+<p>typedef nil = struct;</p>
+<dl class="simple">
+<dt>typedef cons a = struct{</dt><dd><p>a head,
 (cons a) tail};</p>
-</div></blockquote>
+</dd>
+</dl>
 <p>typedef list a = (cons a) | nil;</p>
 </div></blockquote>
 </div>

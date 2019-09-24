@@ -9,7 +9,7 @@
 -------------
 
 * `int`：整數，初期可用 64 位元帶符號整數處理，之後可用任意精度整數處理。
- -  `p_int`：正整數
+ - `p_int`：正整數
  - `n_int`：負整數
  - `z_int`：零整數 
 * `dou`：雙精度浮點數
@@ -47,8 +47,11 @@
 ..
 
   typedef nil = struct {}; # 空型別
+  
   para_struct a b = struct{
+  
                        a item1,
+  
                        b item2}; # 參數化多態型別
 
 
@@ -67,9 +70,11 @@
   typedef food = apple | orange;
   
   typedef nil = struct;
+  
   typedef cons a = struct{
                        a head,
                        (cons a) tail};
+  
   typedef list a = (cons a) | nil;
 
 
@@ -86,29 +91,29 @@
 ..
 
   basic_type = simple_type | union_type | struct_type
-
-  simple_fun_type = (-> input output)
-
-  input_type = input_type_simple | (input_type_simple input_type_simple+) | void
-
-  input_type_simple = basic_type | simple_fun_type
-
-  output_type = input_type_simple | void
-
-
-
-  overload_type = (typeof simple_fun_type+)
-
   
-
+  simple_fun_type = (-> input output)
+  
+  input_type = input_type_simple | (input_type_simple input_type_simple+) | void
+  
+  input_type_simple = basic_type | simple_fun_type
+  
+  output_type = input_type_simple | void
+  
+  
+  
+  overload_type = (typeof simple_fun_type+)
+  
+  
+  
   para_type = (para ((type_var+) in set_type) (-> para_input_type para_output_type))
   
   set_type = basic_type | any
-
   
-
+  
+  
   para_input_type_simple = input_type_simple | type_var
-
+  
   para_input_type = para_input_type_simple | (para_input_type_simple para_input_type_simple+) | void
-
+  
   para_output_type = output_type | type_var
