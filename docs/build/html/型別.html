@@ -110,17 +110,17 @@ typedef cons a = struct{</p>
 </ul>
 <p>函數型別定義如下：</p>
 <blockquote>
-<div><p>basic_type = simple_type | union_type | struct_type
-simple_fun_type = (-&gt; input output)
-input_type = input_type_simple | (input_type_simple input_type_simple+) | void
-input_type_simple = basic_type | simple_fun_type
-output_type = input_type_simple | void</p>
+<div><p>basic_type = simple_type | union_type | struct_type</p>
+<p>simple_fun_type = (-&gt; input output)</p>
+<p>input_type = input_type_simple | (input_type_simple input_type_simple+) | void</p>
+<p>input_type_simple = basic_type | simple_fun_type</p>
+<p>output_type = input_type_simple | void</p>
 <p>overload_type = (typeof simple_fun_type+)</p>
-<p>para_type = (para ((type_var+) in set_type) (-&gt; para_input_type para_output_type))
-set_type = basic_type | any</p>
-<p>para_input_type_simple = input_type_simple | type_var
-para_input_type = para_input_type_simple | (para_input_type_simple para_input_type_simple+) | void
-para_output_type = output_type | type_var</p>
+<p>para_type = (para ((type_var+) in set_type) (-&gt; para_input_type para_output_type))</p>
+<p>set_type = basic_type | any</p>
+<p>para_input_type_simple = input_type_simple | type_var</p>
+<p>para_input_type = para_input_type_simple | (para_input_type_simple para_input_type_simple+) | void</p>
+<p>para_output_type = output_type | type_var</p>
 </div></blockquote>
 </div>
 </div>

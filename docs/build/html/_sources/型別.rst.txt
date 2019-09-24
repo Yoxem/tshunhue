@@ -86,17 +86,29 @@
 ..
 
   basic_type = simple_type | union_type | struct_type
+
   simple_fun_type = (-> input output)
+
   input_type = input_type_simple | (input_type_simple input_type_simple+) | void
+
   input_type_simple = basic_type | simple_fun_type
+
   output_type = input_type_simple | void
-  
+
+
+
   overload_type = (typeof simple_fun_type+)
 
+  
+
   para_type = (para ((type_var+) in set_type) (-> para_input_type para_output_type))
+  
   set_type = basic_type | any
 
-  para_input_type_simple = input_type_simple | type_var
-  para_input_type = para_input_type_simple | (para_input_type_simple para_input_type_simple+) | void
-  para_output_type = output_type | type_var
   
+
+  para_input_type_simple = input_type_simple | type_var
+
+  para_input_type = para_input_type_simple | (para_input_type_simple para_input_type_simple+) | void
+
+  para_output_type = output_type | type_var
