@@ -75,9 +75,24 @@
 <div class="section" id="id1">
 <h1>其他<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
 <ul class="simple">
-<li><p>垃圾回收採用引用記數法 <cite>./GarbageCollection/</cite>，待完成</p></li>
-<li><p>型別判定使用合一演算法</p></li>
+<li><p>垃圾回收採用引用記數法 <cite>./GarbageCollection/</cite>，用哈希表紀錄，待完成。</p></li>
 </ul>
+<p>採用引用計數法，使用不可變物件的概念，使用 table 紀錄位址引用次數。</p>
+<p>函數區塊 call variable 則 count + 1；函數區塊執行結束則 count - 1。變數指定的位址改變時，<cite>a = count[old_ptr]; count[old_ptr] = 0; count[new_ptr] = a</cite>。</p>
+<ul class="simple">
+<li><p>型別判定使用合一演算法</p></li>
+<li><p>遞迴下降分析</p></li>
+<li><p>llvmlite 輸出 LLVM IR。</p></li>
+</ul>
+<div class="section" id="id2">
+<h2>實做方式<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<p>用 Python3 將原始碼轉成 AST，以 s-expression 表示。再進行型別推測後，進行閉包轉換，不進行 CPS 變換，利用 llvmlite 生成 LLVM IR。</p>
+<p>需要的東西：</p>
+<ul class="simple">
+<li><p>llvmlite</p></li>
+<li><p>python3</p></li>
+</ul>
+</div>
 </div>
 
 
