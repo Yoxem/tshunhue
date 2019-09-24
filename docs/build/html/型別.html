@@ -14,6 +14,7 @@
     <script type="text/javascript" src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="基本函數介紹" href="基本函數介紹.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -101,7 +102,20 @@ typedef cons a = struct{</p>
 <li><p><cite>any</cite>：指任何**非閉包**簡單型別及任何 <cite>struct</cite> 與 <cite>union</cite> 型別，參數化多態使用。</p></li>
 <li><p><cite>void</cite>：用於函數輸入與返回值，表不輸入或返回。</p></li>
 </ul>
-<p>函數定義如下：</p>
+<p>函數型別定義如下：</p>
+<blockquote>
+<div><p>basic_type = simple_type | union_type | struct_type
+simple_fun_type = (-&gt; input output)
+input_type = input_type_simple | (input_type_simple input_type_simple+) | void
+input_type_simple = basic_type | simple_fun_type
+output_type = input_type_simple | void</p>
+<p>overload_type = (typeof simple_fun_type+)</p>
+<p>para_type = (para ((type_var+) in set_type) (-&gt; para_input_type para_output_type))
+set_type = basic_type | any</p>
+<p>para_input_type_simple = input_type_simple | type_var
+para_input_type = para_input_type_simple | (para_input_type_simple para_input_type_simple+) | void
+para_output_type = output_type | type_var</p>
+</div></blockquote>
 </div>
 </div>
 
@@ -123,14 +137,30 @@ typedef cons a = struct{</p>
 
 <h3>Navigation</h3>
 <p class="caption"><span class="caption-text">Contents</span></p>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="基本函數介紹.html">基本函數介紹</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">型別</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id2">簡單型別</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id3">數字</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">字串</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">布林</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id6">複雜型別</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id7">結構</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">聯集</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id9">函數型別</a></li>
+</ul>
+</li>
 </ul>
 
 <div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="基本函數介紹.html" title="previous chapter">基本函數介紹</a></li>
   </ul></li>
 </ul>
 </div>
