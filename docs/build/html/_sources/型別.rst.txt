@@ -9,9 +9,9 @@
 -------------
 
 * `int`：整數，初期可用 64 位元帶符號整數處理，之後可用任意精度整數處理。
-** `p_int`：正整數
-** `n_int`：負整數
-** `z_int`：零整數 
+ -  `p_int`：正整數
+ - `n_int`：負整數
+ - `z_int`：零整數 
 * `dou`：雙精度浮點數
 
 字串
@@ -51,6 +51,7 @@
                        a item1,
                        b item2}; # 參數化多態型別
 
+
 文法大致為：
 
 ..
@@ -64,7 +65,7 @@
 ..
 
   typedef food = apple | orange;
-
+  
   typedef nil = struct;
   typedef cons a = struct{
                        a head,
