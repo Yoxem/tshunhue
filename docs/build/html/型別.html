@@ -183,7 +183,10 @@
 <ul class="simple">
 <li><p><cite>str</cite>：字串</p></li>
 </ul>
-<p>..note :: 無 char 型別</p>
+<dl class="simple">
+<dt>..note ::</dt><dd><p>無 char 型別</p>
+</dd>
+</dl>
 </div>
 <div class="section" id="id5">
 <h3>布林<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
@@ -199,24 +202,27 @@
 <h3>結構<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
 <p>類似 Scheme 的紀錄 (record)。可儲存閉包型別。</p>
 <p>不支援型別模板 <cite>struct&lt;a&gt;{…}</cite> 這種的。</p>
-<blockquote>
-<div><p>typedef human = struct{str name, int age};</p>
+<dl>
+<dt>::</dt><dd><p>typedef human = struct{str name, int age};</p>
 <p>human jack = human{name=」Jack」, age=32};</p>
-</div></blockquote>
+</dd>
+</dl>
 <p>可定義空 struct：</p>
-<blockquote>
-<div><p>typedef nil = struct {}; # 空型別</p>
-</div></blockquote>
+<dl class="simple">
+<dt>::</dt><dd><p>typedef nil = struct {}; # 空型別</p>
+</dd>
+</dl>
 <p>文法大致為：</p>
-<blockquote>
-<div><p>struct{[type item]*}</p>
-</div></blockquote>
+<dl class="simple">
+<dt>::</dt><dd><p>struct{[type item]*}</p>
+</dd>
+</dl>
 </div>
 <div class="section" id="id8">
 <h3>聯集<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
 <p>標籤聯合。使用 <cite>union</cite> 聯集型別。不可儲存閉包型別。</p>
-<blockquote>
-<div><p>typedef food = union{apple, orange};</p>
+<dl>
+<dt>::</dt><dd><p>typedef food = union{apple, orange};</p>
 <p>typedef nil = struct;</p>
 <dl class="simple">
 <dt>typedef cons_int = struct{</dt><dd><p>int head,
@@ -224,7 +230,8 @@ cons_int tail};</p>
 </dd>
 </dl>
 <p>typedef list_int = union{cons_int, nil};</p>
-</div></blockquote>
+</dd>
+</dl>
 </div>
 </div>
 <div class="section" id="id9">
@@ -235,19 +242,35 @@ cons_int tail};</p>
 <li><p><cite>void</cite>：用於函數輸入與返回值，表不輸入或返回。</p></li>
 </ul>
 <p>函數型別定義如下：</p>
-<blockquote>
-<div><p>basic_type = simple_type | union_type | struct_type</p>
-<p>simple_fun_type = (-&gt; input output)</p>
-<p>input_type = input_type_simple | (input_type_simple input_type_simple+) | void</p>
-<p>input_type_simple = basic_type | simple_fun_type</p>
-<p>output_type = input_type_simple | void</p>
-<p>overload_type = (typeof simple_fun_type+)</p>
-<p>para_type = (para ((type_var+) in set_type) (-&gt; para_input_type para_output_type))</p>
-<p>set_type = basic_type | any</p>
-<p>para_input_type_simple = input_type_simple | type_var</p>
-<p>para_input_type = para_input_type_simple | (para_input_type_simple para_input_type_simple+) | void</p>
-<p>para_output_type = output_type | type_var</p>
-</div></blockquote>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">basic_type</span> <span class="o">=</span> <span class="n">simple_type</span> <span class="o">|</span> <span class="n">union_type</span> <span class="o">|</span> <span class="n">struct_type</span>
+
+<span class="n">simple_fun_type</span> <span class="o">=</span> <span class="p">(</span><span class="o">-&gt;</span> <span class="nb">input</span> <span class="n">output</span><span class="p">)</span>
+
+<span class="n">input_type</span> <span class="o">=</span> <span class="n">input_type_simple</span> <span class="o">|</span> <span class="p">(</span><span class="n">input_type_simple</span> <span class="n">input_type_simple</span><span class="o">+</span><span class="p">)</span> <span class="o">|</span> <span class="n">void</span>
+
+<span class="n">input_type_simple</span> <span class="o">=</span> <span class="n">basic_type</span> <span class="o">|</span> <span class="n">simple_fun_type</span>
+
+<span class="n">output_type</span> <span class="o">=</span> <span class="n">input_type_simple</span> <span class="o">|</span> <span class="n">void</span>
+
+
+
+<span class="n">overload_type</span> <span class="o">=</span> <span class="p">(</span><span class="n">typeof</span> <span class="n">simple_fun_type</span><span class="o">+</span><span class="p">)</span>
+
+
+
+<span class="n">para_type</span> <span class="o">=</span> <span class="p">(</span><span class="n">para</span> <span class="p">((</span><span class="n">type_var</span><span class="o">+</span><span class="p">)</span> <span class="ow">in</span> <span class="n">set_type</span><span class="p">)</span> <span class="p">(</span><span class="o">-&gt;</span> <span class="n">para_input_type</span> <span class="n">para_output_type</span><span class="p">))</span>
+
+<span class="n">set_type</span> <span class="o">=</span> <span class="n">basic_type</span> <span class="o">|</span> <span class="nb">any</span>
+
+
+
+<span class="n">para_input_type_simple</span> <span class="o">=</span> <span class="n">input_type_simple</span> <span class="o">|</span> <span class="n">type_var</span>
+
+<span class="n">para_input_type</span> <span class="o">=</span> <span class="n">para_input_type_simple</span> <span class="o">|</span> <span class="p">(</span><span class="n">para_input_type_simple</span> <span class="n">para_input_type_simple</span><span class="o">+</span><span class="p">)</span> <span class="o">|</span> <span class="n">void</span>
+
+<span class="n">para_output_type</span> <span class="o">=</span> <span class="n">output_type</span> <span class="o">|</span> <span class="n">type_var</span>
+</pre></div>
+</div>
 </div>
 </div>
 

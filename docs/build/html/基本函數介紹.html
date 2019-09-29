@@ -499,17 +499,17 @@
 </pre></div>
 </div>
 <p>例如：</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>p_int x = 9; # 定義正整數
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">p_int</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">9</span><span class="p">;</span> <span class="c1"># 定義正整數</span>
 
-dou pi = 3.1416; # 定義浮點數值
+<span class="n">dou</span> <span class="n">pi</span> <span class="o">=</span> <span class="mf">3.1416</span><span class="p">;</span> <span class="c1"># 定義浮點數值</span>
 
-dou z = pi; # 設定值
+<span class="n">dou</span> <span class="n">z</span> <span class="o">=</span> <span class="n">pi</span><span class="p">;</span> <span class="c1"># 設定值</span>
 
-int x = lambda(int x){return x + 1;}(8); # 8 + 1 = 9
-
-
-
-..note :: 因為 tshunhue 裡面，所有變數都是不可變物件， ``=`` 不可以拿來重新設定值。定義閉包也一樣。
+<span class="nb">int</span> <span class="n">x</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">(</span><span class="nb">int</span> <span class="n">x</span><span class="p">){</span><span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;}(</span><span class="mi">8</span><span class="p">);</span> <span class="c1"># 8 + 1 = 9</span>
+</pre></div>
+</div>
+<p>..note</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>因為 tshunhue 裡面，所有變數都是不可變物件， ``=`` 不可以拿來重新設定值。定義閉包也一樣。
 </pre></div>
 </div>
 </div>
@@ -517,10 +517,10 @@ int x = lambda(int x){return x + 1;}(8); # 8 + 1 = 9
 <h3>函數（閉包）<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
 <p id="defining-lambda">閉包的定義比較複雜。但大致如下：</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">type_of_function</span>
-<span class="n">fn_var</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">(</span><span class="n">x1</span> <span class="o">*</span><span class="p">[,</span><span class="o">...</span><span class="p">]</span><span class="o">*</span><span class="p">){</span><span class="o">*</span><span class="n">body</span><span class="o">*</span><span class="p">};</span>
+<span class="n">fn_var</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">(</span><span class="n">x1</span> <span class="p">[,</span><span class="o">...</span><span class="p">]){</span><span class="o">*</span><span class="n">body</span><span class="o">*</span><span class="p">};</span>
 </pre></div>
 </div>
-<p>通常 <cite>type_of_function`（函數型別）與 `fn_var`（函數名）要換行。不換行空白也行，如`(-&gt; int int) id_int = lambda(x){return x;};</cite>。</p>
+<p>通常 type_of_function（函數型別）與 fn_var（函數名）要換行。不換行空白也行，如`(-&gt; int int) id_int = lambda(x){return x;};`。</p>
 <p>基本函數定義：</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="sd">&#39;&#39;&#39;單引數函數&#39;&#39;&#39;</span>
 <span class="p">(</span><span class="o">-&gt;</span> <span class="nb">int</span> <span class="nb">int</span><span class="p">)</span>
@@ -581,7 +581,7 @@ int x = lambda(int x){return x + 1;}(8); # 8 + 1 = 9
 <dd></dd></dl>
 
 <p>匿名函數 lambda，輸入時需強制標示型別（除非用於定義非多載函數的時候）。輸出如 block。除非不返回回傳值，否則一律要加 return 標示回傳值。</p>
-<p>有關於函數定義，請參考 <a class="reference internal" href="#defining-lambda"><span class="std std-ref">定義函數</span></a></p>
+<p>有關於函數定義，請參考 <a class="reference internal" href="#defining-lambda"><span class="std std-ref">定義函數</span></a>。</p>
 <p>事例如下：</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">block</span> <span class="o">=</span> <span class="n">expressions</span><span class="o">+</span><span class="p">;</span> <span class="k">return</span> <span class="n">expression</span><span class="p">;</span>
 </pre></div>

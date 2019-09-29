@@ -190,7 +190,9 @@
 
 
 
-  ..note :: 因為 tshunhue 裡面，所有變數都是不可變物件， ``=`` 不可以拿來重新設定值。定義閉包也一樣。
+..note ::
+
+  因為 tshunhue 裡面，所有變數都是不可變物件， ``=`` 不可以拿來重新設定值。定義閉包也一樣。
 
 
 函數（閉包）
@@ -203,9 +205,10 @@
 ::
 
   type_of_function
-  fn_var = lambda(x1 *[,...]*){*body*};
+  fn_var = lambda(x1 [,...]){*body*};
 
-通常 `type_of_function`（函數型別）與 `fn_var`（函數名）要換行。不換行空白也行，如`(-> int int) id_int = lambda(x){return x;};`。
+
+通常 type_of_function（函數型別）與 fn_var（函數名）要換行。不換行空白也行，如`(-> int int) id_int = lambda(x){return x;};`。
 
 基本函數定義：
 
@@ -275,7 +278,7 @@
 
 匿名函數 lambda，輸入時需強制標示型別（除非用於定義非多載函數的時候）。輸出如 block。除非不返回回傳值，否則一律要加 return 標示回傳值。
 
-有關於函數定義，請參考 :ref:`定義函數<defining-lambda>`
+有關於函數定義，請參考 :ref:`定義函數<defining-lambda>`。
 
 事例如下：
 ::
