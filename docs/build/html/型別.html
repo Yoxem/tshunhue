@@ -38,16 +38,13 @@
 <div class="section" id="id3">
 <h3>數字<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
-<li><p><cite>int</cite>：整數，初期可用 64 位元帶符號整數處理，之後可用任意精度整數處理。</p></li>
-</ul>
-<blockquote>
-<div><ul class="simple">
+<li><p><cite>int</cite>：整數，初期可用 64 位元帶符號整數處理，之後可用任意精度整數處理。</p>
+<ul>
 <li><p><cite>p_int</cite>：正整數</p></li>
 <li><p><cite>n_int</cite>：負整數</p></li>
 <li><p><cite>z_int</cite>：零整數</p></li>
 </ul>
-</div></blockquote>
-<ul class="simple">
+</li>
 <li><p><cite>dou</cite>：雙精度浮點數</p></li>
 </ul>
 </div>
@@ -71,33 +68,32 @@
 <div class="section" id="id7">
 <h3>結構<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
 <p>類似 Scheme 的紀錄 (record)。可儲存閉包型別。</p>
+<p>不支援型別模板 <cite>struct&lt;a&gt;{…}</cite> 這種的。</p>
 <blockquote>
 <div><p>typedef human = struct{str name, int age};</p>
 <p>human jack = human{name=」Jack」, age=32};</p>
 </div></blockquote>
-<p>可定義空 struct，和參數化型別：</p>
+<p>可定義空 struct：</p>
 <blockquote>
 <div><p>typedef nil = struct {}; # 空型別</p>
-<p>para_struct a b = struct{</p>
-<blockquote>
-<div><p>a item1,</p>
-<p>b item2}; # 參數化多態型別</p>
-</div></blockquote>
 </div></blockquote>
 <p>文法大致為：</p>
+<blockquote>
+<div><p>struct{[type item]*}</p>
+</div></blockquote>
 </div>
 <div class="section" id="id8">
 <h3>聯集<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
-<p>標籤聯合。使用 <cite>|</cite> 聯集型別。不可儲存閉包型別。</p>
+<p>標籤聯合。使用 <cite>union</cite> 聯集型別。不可儲存閉包型別。</p>
 <blockquote>
-<div><p>typedef food = apple | orange;</p>
+<div><p>typedef food = union{apple, orange};</p>
 <p>typedef nil = struct;</p>
 <dl class="simple">
-<dt>typedef cons a = struct{</dt><dd><p>a head,
-(cons a) tail};</p>
+<dt>typedef cons_int = struct{</dt><dd><p>int head,
+cons_int tail};</p>
 </dd>
 </dl>
-<p>typedef list a = (cons a) | nil;</p>
+<p>typedef list_int = union{cons_int, nil};</p>
 </div></blockquote>
 </div>
 </div>

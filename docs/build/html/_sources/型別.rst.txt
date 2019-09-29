@@ -9,9 +9,13 @@
 -------------
 
 * `int`：整數，初期可用 64 位元帶符號整數處理，之後可用任意精度整數處理。
- - `p_int`：正整數
- - `n_int`：負整數
- - `z_int`：零整數 
+
+  - `p_int`：正整數
+    
+  - `n_int`：負整數
+    
+  - `z_int`：零整數
+    
 * `dou`：雙精度浮點數
 
 字串
@@ -35,6 +39,7 @@
 ------------
 類似 Scheme 的紀錄 (record)。可儲存閉包型別。
 
+不支援型別模板 `struct<a>{...}` 這種的。
 
 ..
 
@@ -42,40 +47,35 @@
 
   human jack = human{name="Jack", age=32};
 
-可定義空 struct，和參數化型別：
+可定義空 struct：
 
 ..
 
   typedef nil = struct {}; # 空型別
-  
-  para_struct a b = struct{
-  
-                       a item1,
-  
-                       b item2}; # 參數化多態型別
 
 
 文法大致為：
 
 ..
+
   struct{[type item]*}
 
 
 聯集
 -----------------
-標籤聯合。使用 `|` 聯集型別。不可儲存閉包型別。
+標籤聯合。使用 `union` 聯集型別。不可儲存閉包型別。
 
 ..
 
-  typedef food = apple | orange;
+  typedef food = union{apple, orange};
   
   typedef nil = struct;
   
-  typedef cons a = struct{
-                       a head,
-                       (cons a) tail};
+  typedef cons_int = struct{
+                       int head,
+                       cons_int tail};
   
-  typedef list a = (cons a) | nil;
+  typedef list_int = union{cons_int, nil};
 
 
 函數型別
