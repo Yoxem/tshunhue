@@ -42,6 +42,7 @@
 不支援型別模板 `struct<a>{...}` 這種的。
 
 ::
+
   typedef human = struct{str name, int age};
 
   human jack = human{name="Jack", age=32};
@@ -49,12 +50,14 @@
 可定義空 struct：
 
 ::
+
   typedef nil = struct {}; # 空型別
 
 
 文法大致為：
 
 ::
+
   struct{[type item]*}
 
 
@@ -63,6 +66,7 @@
 標籤聯合。使用 `union` 聯集型別。不可儲存閉包型別。
 
 ::
+
   typedef food = union{apple, orange};
   
   typedef nil = struct;

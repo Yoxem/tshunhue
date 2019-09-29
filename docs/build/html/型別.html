@@ -199,36 +199,34 @@
 <h3>結構<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
 <p>類似 Scheme 的紀錄 (record)。可儲存閉包型別。</p>
 <p>不支援型別模板 <cite>struct&lt;a&gt;{…}</cite> 這種的。</p>
-<dl>
-<dt>::</dt><dd><p>typedef human = struct{str name, int age};</p>
-<p>human jack = human{name=」Jack」, age=32};</p>
-</dd>
-</dl>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">typedef</span> <span class="n">human</span> <span class="o">=</span> <span class="n">struct</span><span class="p">{</span><span class="nb">str</span> <span class="n">name</span><span class="p">,</span> <span class="nb">int</span> <span class="n">age</span><span class="p">};</span>
+
+<span class="n">human</span> <span class="n">jack</span> <span class="o">=</span> <span class="n">human</span><span class="p">{</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Jack&quot;</span><span class="p">,</span> <span class="n">age</span><span class="o">=</span><span class="mi">32</span><span class="p">};</span>
+</pre></div>
+</div>
 <p>可定義空 struct：</p>
-<dl class="simple">
-<dt>::</dt><dd><p>typedef nil = struct {}; # 空型別</p>
-</dd>
-</dl>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">typedef</span> <span class="n">nil</span> <span class="o">=</span> <span class="n">struct</span> <span class="p">{};</span> <span class="c1"># 空型別</span>
+</pre></div>
+</div>
 <p>文法大致為：</p>
-<dl class="simple">
-<dt>::</dt><dd><p>struct{[type item]*}</p>
-</dd>
-</dl>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">struct</span><span class="p">{[</span><span class="nb">type</span> <span class="n">item</span><span class="p">]</span><span class="o">*</span><span class="p">}</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="id8">
 <h3>聯集<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
 <p>標籤聯合。使用 <cite>union</cite> 聯集型別。不可儲存閉包型別。</p>
-<dl>
-<dt>::</dt><dd><p>typedef food = union{apple, orange};</p>
-<p>typedef nil = struct;</p>
-<dl class="simple">
-<dt>typedef cons_int = struct{</dt><dd><p>int head,
-cons_int tail};</p>
-</dd>
-</dl>
-<p>typedef list_int = union{cons_int, nil};</p>
-</dd>
-</dl>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">typedef</span> <span class="n">food</span> <span class="o">=</span> <span class="n">union</span><span class="p">{</span><span class="n">apple</span><span class="p">,</span> <span class="n">orange</span><span class="p">};</span>
+
+<span class="n">typedef</span> <span class="n">nil</span> <span class="o">=</span> <span class="n">struct</span><span class="p">;</span>
+
+<span class="n">typedef</span> <span class="n">cons_int</span> <span class="o">=</span> <span class="n">struct</span><span class="p">{</span>
+                     <span class="nb">int</span> <span class="n">head</span><span class="p">,</span>
+                     <span class="n">cons_int</span> <span class="n">tail</span><span class="p">};</span>
+
+<span class="n">typedef</span> <span class="n">list_int</span> <span class="o">=</span> <span class="n">union</span><span class="p">{</span><span class="n">cons_int</span><span class="p">,</span> <span class="n">nil</span><span class="p">};</span>
+</pre></div>
+</div>
 </div>
 </div>
 <div class="section" id="id9">
