@@ -290,7 +290,38 @@ BigNum shiftRight(BigNum num, int n){
   return num;
 }
 
+BigNum multiply(BigNum lhs, BigNum rhs){
+  BigNum result;
 
+  int temp_result_len = lhs.length + rhs.length;
+  unsigned int * result_abs = malloc(sizeof(int) * temp_result_len);
+  memset(result_abs, 0, temp_result_len);
+
+  for (int i=0;i<lhs.length;i++){
+    for (int j=0;j<rhs.length;j++){
+      result_abs[i] += (lhs.array[i] * rhs.array[i]);
+    }
+  }
+
+  for(int i=temp_result_len-1;result_abs[i]==0;i--){
+    // if result_abs[i] (tail) is zero, delete it.
+    temp_result_len = temp_result_len - 1; // temp_result_len should be shortened
+
+    result_abs = realloc(result_abs, sizeof(int) * temp_result_len);
+  }
+
+  result.length = temp_result_len;
+  result.array = result_abs;
+
+  if (lhs.isNotNeg == rhs.isNotNeg || bigNumEqual(lhs, intToBigNum(0)) || bigNumEqual(rhs, intToBigNum(0))){
+    result.isNotNeg = true;
+  }
+  else{
+    result.isNotNeg == false;
+  }
+
+  return result;
+}
 
 int main(void){
     BigNum a = intToBigNum(-12345);
