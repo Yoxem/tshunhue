@@ -23,4 +23,8 @@ BigNum shiftRightOnce(BigNum num);
 BigNum subtract(BigNum lhs, BigNum rhs);
 BigNum BigNumRemainder(BigNum lhs, BigNum rhs);
 BigNum findRemainder(BigNum lhs, BigNum rhs, BigNum quotient);
+
+unsigned int lo(unsigned int n);
+unsigned int hi(unsigned int n);
+
 #endif

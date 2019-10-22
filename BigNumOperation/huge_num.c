@@ -5,7 +5,7 @@
 #include "huge_num.h"
 
 #define UNSIGNED_INT_MAX 4294967295
-
+#define _2_32 4294967296 // 2^32
 typedef struct bigNum{
     bool isNotNeg;
     int length;
@@ -185,6 +185,8 @@ BigNum absadd(BigNum a, BigNum b){
     result.length = b.length;
   }
 
+  result.array = calloc(result.length, sizeof(int));
+
   unsigned int carry = 0;
 
   for (int i=0; i < result.length; i++){
@@ -294,27 +296,48 @@ BigNum shiftRight(BigNum num, int n){
   return num;
 }
 
+unsigned int lo(unsigned int n){
+  return ((1U << 16)-1) & n;
+}
+
+unsigned int hi(unsigned int n){
+  return n >> 16;
+}
+
 BigNum multiply(BigNum lhs, BigNum rhs){
-  BigNum result;
 
   int temp_result_len = lhs.length + rhs.length;
   unsigned int * result_abs = calloc(temp_result_len, sizeof(int));
 
+  BigNum result = intToBigNum(0);
+
   for (int i=0;i<lhs.length;i++){
     for (int j=0;j<rhs.length;j++){
-      result_abs[i] += (lhs.array[i] * rhs.array[i]);
+      unsigned long int l = lhs.array[i];
+      unsigned long int r = rhs.array[j];
+      unsigned long int lr = l * r;
+
+      unsigned long int base = (unsigned int)(lr % _2_32);
+      unsigned long int carry = (unsigned int) (lr / _2_32);
+
+      BigNum temp_big_num;
+      temp_big_num.isNotNeg = true;
+      temp_big_num.length = 1;
+      temp_big_num.array = malloc(sizeof(unsigned int));
+      temp_big_num.array[0] = base;
+        
+      if (carry != 0){
+        temp_big_num.length = 2;
+        temp_big_num.array = realloc(temp_big_num.array, sizeof(unsigned int)*2);
+        temp_big_num.array[0] = (unsigned int) base;
+        temp_big_num.array[1] = (unsigned int) carry;
+      }
+        
+      temp_big_num = shiftLeft(temp_big_num, (i+j)*32);
+
+      result = add(result, temp_big_num);
     }
   }
-
-  for(int i=temp_result_len-1;result_abs[i]==0;i--){
-    // if result_abs[i] (tail) is zero, delete it.
-    temp_result_len = temp_result_len - 1; // temp_result_len should be shortened
-
-    result_abs = realloc(result_abs, sizeof(int) * temp_result_len);
-  }
-
-  result.length = temp_result_len;
-  result.array = result_abs;
 
   if (lhs.isNotNeg == rhs.isNotNeg || bigNumEqual(lhs, intToBigNum(0)) || bigNumEqual(rhs, intToBigNum(0))){
     result.isNotNeg = true;
@@ -391,15 +414,15 @@ BigNum quotient(BigNum lhs, BigNum rhs){
 
       BigNum _2y_k = multiply(intToBigNum(2), y_k);
       BigNum y_k_2_d = multiply(multiply(y_k, y_k), abs_rhs); // y_k^(2)*abs_rhs
-      BigNum y_k_2_d_leftshift_p = shiftLeft(y_k_2_d, p); // (y_k^2 * abs_rhs) << p
+      BigNum y_k_2_d_rightshift_p = shiftRight(y_k_2_d, p * 32); // (y_k^2 * abs_rhs) >> p
 
-      y_k = subtract(_2y_k, y_k_2_d_leftshift_p);
+      y_k = subtract(_2y_k, y_k_2_d_rightshift_p);
 
 
     }
 
     BigNum lhs_y_k = multiply(lhs, y_k); // lhs * y_k
-    BigNum quotient = shiftLeft(lhs_y_k,p); // lhs * y_k // << p
+    BigNum quotient = shiftRight(lhs_y_k,p * 32); // lhs * y_k // >> p
 
 
     BigNum remainder = subtract(abs_lhs,multiply(abs_rhs,quotient));
@@ -468,17 +491,23 @@ char* BigNumToDecStr(BigNum n){
 }
 
 int main(void){
-    BigNum a = intToBigNum(-12345);
+    /*BigNum a = intToBigNum(-12345);
     BigNum b = intToBigNum(-74892074);
     BigNum g = intToBigNum(4294967296/2-1);
     g = shiftLeft(g, 3);
-    g = shiftRight(g, 3);
+    g = shiftRight(g, 3);*/
 
-    BigNum x = quotient(intToBigNum(76),intToBigNum(4));
+    BigNum x1 = intToBigNum(120);
+    BigNum x2 = intToBigNum(76);
 
+    BigNum x =  quotient(x1, x2);// quotient(intToBigNum(76),intToBigNum(4));
+    // printf("%s", BigNumToDecStr(x));
+
+    /*
     printf("%s", BigNumToDecStr(a));
     printf("%s", BigNumToDecStr(b));
     printf("%s", BigNumToDecStr(g));
+    */
 
     // bool c = bigNumGreaterThan(a, b);
     // bool d = bigNumLessThan(a, b);
