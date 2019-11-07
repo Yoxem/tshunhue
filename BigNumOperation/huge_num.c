@@ -2,43 +2,88 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdint.h>
 #include "huge_num.h"
 
-#define UNSIGNED_INT_MAX 4294967295
-#define _2_32 4294967296 // 2^32
-typedef struct bigNum{
-    bool isNotNeg;
-    int length;
-    unsigned int * array;
-}  BigNum;
+#define _2_32_ 4294967296
 
-BigNum intToBigNum(int i){
-  BigNum  bigNum;
-  bigNum.length = 1;
-  bigNum.array =  (unsigned int*) malloc(sizeof(int) * 1);
+typedef struct BigNum {
+  bool isNotNeg;
+  size_t used;
+  uint32_t* digit;
+} BigNum;
 
-  if (i >= 0){
-    bigNum.isNotNeg = true;
-    bigNum.array[0] = i;
+typedef enum {
+  OverBorder,
+  UnableToInitialized,
+  DivZero,
+  IllegalBase,
+  SizeTooSmall,
+} BigNumErrorCode;
+
+int bigNumInit (BigNum* num, size_t digit_num){
+  bool unable_to_initalized = false;
+  num = calloc(sizeof(BigNum), 1);
+  if (!num){
+    unable_to_initalized = true;
+  }
+  
+  uint32_t* digits = calloc(sizeof(uint32_t), digit_num);
+
+  if (!digits){
+    unable_to_initalized = true;
+  }
+
+  num->digit = digits;
+  num->used = digit_num - 1;
+
+  if (unable_to_initalized == true){
+    return UnableToInitialized;
   }
   else{
-    bigNum.isNotNeg = false;
-    bigNum.array[0] = -i;
+    return 0;
   }
-
-  return  bigNum;
 }
-bool bigNumAbsGreaterThan(BigNum lhs, BigNum rhs){
-  if (lhs.length > rhs.length){
-      return true;
+
+void bigNumFree (BigNum* num){
+  free(num->digit);
+  free(num);
+}
+
+void bigNumCopy (BigNum* orig, BigNum * dest){
+  dest->used = orig->used;
+  dest->isNotNeg = orig->isNotNeg;
+
+  for (size_t i=0;i<=orig->used;i++){
+    dest->digit[i] = orig->digit[i];
   }
-  else if (lhs.length < rhs.length){
-      return false;
+}
+
+int int32ToBigNum(BigNum* bigNum, int32_t i32Num){
+  if (i32Num>=0){
+    bigNum->isNotNeg = true;
+    bigNum->digit[0] = i32Num;
+    bigNum->used = 1;
   }
   else{
-    // compare with reversing order
-    for (int i = lhs.length-1; i >= 0; i--){
-      if (lhs.array[i] > rhs.array[i]){
+    bigNum->isNotNeg = false;
+    bigNum->digit[0] = -i32Num;
+    bigNum->used = 1;
+  }
+
+    return 0;
+}
+
+bool bigNumAbsLarger(BigNum* lhs, BigNum* rhs){
+  if(lhs->used > rhs->used){
+    return true;
+  }
+  else if(lhs->used < rhs->used){
+    return false;
+  }
+  else{
+    for(size_t i=lhs->used;i>=0;i--){
+      if (lhs->digit[i]>rhs->digit[i]){
         return true;
       }
     }
@@ -46,541 +91,542 @@ bool bigNumAbsGreaterThan(BigNum lhs, BigNum rhs){
   }
 }
 
-bool bigNumAbsEqual(BigNum lhs, BigNum rhs){
-  // compare with reversing order
-    for (int i = lhs.length-1; i >= 0; i--){
-      if (lhs.array[i] != rhs.array[i]){
+bool bigNumAbsEqual(BigNum* lhs, BigNum* rhs){
+  if(lhs->used > rhs->used){
+    return false;
+  }
+  else if(lhs->used < rhs->used){
+    return false;
+  }
+  else{
+    for(size_t i=lhs->used;i>=0;i--){
+      if (lhs->digit[i]!=rhs->digit[i]){
         return false;
       }
     }
     return true;
   }
+}
 
-bool bigNumEqual(BigNum lhs, BigNum rhs){
-  if (lhs.isNotNeg != rhs.isNotNeg){
-    return false;
-  }
-  else{
+bool bigNumEqual(BigNum* lhs, BigNum* rhs){
+  if(lhs->isNotNeg == rhs->isNotNeg){
     return bigNumAbsEqual(lhs, rhs);
   }
-}
+  else{
+    return false;
+}}
 
-bool bigNumGreaterThan(BigNum lhs, BigNum rhs){
-  if (lhs.isNotNeg == true & rhs.isNotNeg == false){
+bool bigNumLarger(BigNum* lhs, BigNum* rhs){
+  if(lhs->isNotNeg == true & rhs->isNotNeg == false){
     return true;
   }
-  else if(lhs.isNotNeg == false & rhs.isNotNeg == true){
+  else if(lhs->isNotNeg == false & rhs->isNotNeg == true){
     return false;
+  }else if (lhs->isNotNeg == true & rhs->isNotNeg == true){
+    return bigNumAbsLarger(lhs,rhs);
+  }else{
+    return bigNumAbsLarger(rhs,lhs);
   }
-  if (lhs.isNotNeg == true & rhs.isNotNeg == true){
-    return bigNumAbsGreaterThan(lhs, rhs);
+}
+
+bool bigNumLess(BigNum* lhs, BigNum* rhs){
+  return (!(bigNumEqual(lhs, rhs) || (bigNumAbsLarger(lhs, rhs))));
+}
+
+
+bool bigNumAbsLess(BigNum* lhs, BigNum* rhs){
+  return !(bigNumAbsEqual(lhs, rhs) || bigNumAbsLarger(lhs, rhs));
+}
+
+int bigNumAbsAdd(BigNum* bigger, BigNum* smaller, BigNum* result){
+  size_t n = bigger->used;
+  uint64_t carry = 0;
+  
+  for (size_t i=0; i<=n;i++){
+    uint64_t b_i = bigger->digit[i];
+    uint64_t s_i;
+
+    if (i>smaller->used){
+      s_i = 0;
+    }else{
+      s_i = smaller->digit[i];
+    }
+
+    uint64_t res = (b_i + s_i + carry);
+
+    if (res > _2_32_){
+      result->digit[i] = (uint32_t)(res - _2_32_);
+      carry = 1;
+    }
+    else{
+      result->digit[i] = (uint32_t)res;
+      carry = 0;
+    }
+
+  }
+
+  if (carry == 1){
+    result->digit[n+1] = carry;
+    result->used = n+1;
   }
   else{
-    return ! bigNumAbsGreaterThan(lhs, rhs);
+    result->used = n;
   }
+
+  return 0;
 }
 
-bool bigNumAbsLessThan(BigNum lhs, BigNum rhs){
-  bool result = (! bigNumAbsGreaterThan(lhs, rhs)) & (! bigNumAbsEqual(lhs, rhs));
-  return result;
-}
+int bigNumAbsSubtract(BigNum* bigger, BigNum* smaller, BigNum* result){
+  size_t n = bigger->used;
+  int64_t carry = 0;
 
-bool bigNumLessThan(BigNum lhs, BigNum rhs){
-  bool result = (! bigNumGreaterThan(lhs, rhs)) & (! bigNumEqual(lhs, rhs));
-  return result;
-}
 
-// >> 1
-BigNum shiftRightOnce(BigNum num){
-  if (num.length == 1){
-    num.array[0] = num.array[0] >> 1;
-    return num;
-  }
-  else{
-    for(int i = 0; i < num.length; i++){
-    unsigned int borrow;
 
-    if (i == num.length - 1){
-      borrow = 0;
+  for (size_t i=0; i<=n;i++){
+    int64_t b_i = bigger->digit[i];
+    int64_t s_i;
+
+    if(n>smaller->used){
+      s_i = 0;
     }
     else{
-      borrow = num.array[i+1] % 2;
-    }
-      
-    unsigned int borrow_added = borrow * 2147483648; // 2147483648 = 2 ** 31
-    num.array[i] = (num.array[i] >> 1) | borrow_added;
+      s_i = smaller->digit[i];
     }
 
-    if (num.array[num.length-1] == 0){
-      num.array = realloc(num.array, sizeof(int)*num.length - 1);
-      num.length = num.length - 1;
-    }
-
-    return num;
-  }
-}
-
-BigNum subtract(BigNum lhs, BigNum rhs){
-  // lhs - 0 = lhs
-  if (bigNumEqual(rhs, intToBigNum(0))){
-    return lhs;
-  }
-  // lhs - rhs = lhs + (- rhs) = lhs - new_rhs
-  else{
-    BigNum new_rhs = rhs;
-    new_rhs.isNotNeg = !(new_rhs.isNotNeg);
-    return add(lhs, new_rhs);
-    }
-  }
-
-// the real "add function"
-BigNum add(BigNum lhs, BigNum rhs){
-  if (lhs.isNotNeg == true && rhs.isNotNeg == true){
-    BigNum result;
-
-    if (!bigNumAbsLessThan(lhs,rhs)){
-    result = absadd(lhs, rhs);
+    int64_t res_i;
+    if (b_i < s_i){
+      res_i = (b_i - s_i + _2_32_) + carry;
+      result->digit[i] = (uint32_t) res_i;
+      carry = -1;
     }
     else{
-      result = absadd(rhs, lhs);
-    }
-    result.isNotNeg = true;
-    return result;
-  }
-  else if(lhs.isNotNeg == false && rhs.isNotNeg == false){
-    BigNum result;
-    if (!bigNumAbsLessThan(lhs,rhs)){
-    result = absadd(lhs, rhs);
-    }
-    else{
-      result = absadd(rhs, lhs);
-    }
-    result.isNotNeg = false;
-    return result;
-  }
-  else if(lhs.isNotNeg == true && rhs.isNotNeg == false){
-    BigNum result;
-
-    // eg. 5 + (-4) > 0 or (6) + (-6) == 0
-    if (bigNumAbsGreaterThan(lhs, rhs) || bigNumAbsEqual(lhs, rhs)){
-      result = abssubtraction(lhs, rhs);
-      result.isNotNeg = true;
-      return result;
-    }
-
-    // eg. 7 + (-8) < 0
-    else{
-      result = abssubtraction(rhs, lhs);
-      result.isNotNeg = false;
-      return result;
-    }
-  }
-  // lhs < 0 and rhs >= 0
-  else{
-    BigNum result;
-    // eg. (-5) + (2) < 0
-    if (bigNumAbsGreaterThan(lhs, rhs)){
-      result = abssubtraction(lhs, rhs);
-      result.isNotNeg = false;
-      return result;
-    }
-
-    // eg. (-6) + (8) > 0 or (-3) + (3) == 0
-    else{
-      result = abssubtraction(rhs, lhs);
-      result.isNotNeg = true;
-      return result;
-    }
-  }
-}
-
-// |a| + |b|. a must be greater than or equal to b. 
-BigNum absadd(BigNum a, BigNum b){
-  BigNum result;
-  if (a.length > b.length){
-    result.length = a.length;
-  }
-  else {
-    result.length = b.length;
-  }
-
-  result.array = calloc(result.length, sizeof(unsigned int));
-
-  unsigned long int carry = 0;
-
-  for (int i=0; i < result.length; i++){
-    unsigned long int b_array_i;
-    if (i >= b.length){
-      b_array_i = 0;
-    }
-    else{
-      b_array_i = b.array[i];
-    }
-    unsigned long int a_array_i = a.array[i];
-
-    unsigned long int sum = a_array_i + b_array_i + carry;
-    
-    unsigned int result_i = sum % _2_32;
-
-    result.array[i] = result_i;
-    
-    carry = sum / _2_32;
-  }
-
-  if (carry > 0){
-    result.length += 1;
-    result.array[result.length-1] = carry;
-  }
-
-  return result;
-}
-
-BigNum abssubtraction(BigNum a, BigNum b){
-  BigNum result;
-  result.length = a.length;
-  result.array = malloc(sizeof(unsigned int)* result.length);
-
-  for (int i=0; i < result.length; i++){
-
-    unsigned int b_array_i;
-    if (i >= b.length){
-      b_array_i = 0;
-    }
-    else{
-      b_array_i = b.array[i];
-    }
-    
-    if (a.array[i] < b_array_i){
-      a.array[i+1] -= 1;
-      
-      result.array[i] =  a.array[i] + (UNSIGNED_INT_MAX - b_array_i);
-    }
-    else{
-      result.array[i] = a.array[i] - b_array_i;
+      res_i =  b_i + carry - s_i;
+      if (res_i < 0){
+        res_i = res_i + _2_32_;
+        result->digit[i] = (uint32_t) res_i;
+        carry = -1;
+      }
+      else{
+        result->digit[i] = res_i;
+        carry = 0;
+      }
     }
   }
 
-  for(int i=result.length-1; i >= 0; i--){
-    if (result.array[i] > 0){
+  // update the res->used.
+  for (size_t i=n;i>=0;i--){
+    if(result->digit[i] != 0 || i == 0){
+      result->used = i;
+
       break;
     }
-    else{
-      if (i > 0){
-        result.array = realloc(result.array, result.length - 1);
-        result.length -= 1;
-      }
-    }
   }
 
-    
+  return 0;
   
-  
-  return result;
 }
 
-
-// << 1
-BigNum shiftLeftOnce(BigNum num){
-  unsigned int lastItem = num.array[num.length-1];
-    
-  // append one empty item to catch the carry
-  if (lastItem >= 2147483648) // 8FFFFFFF
-  {
-    num.array = realloc(num.array, sizeof(unsigned int)*(num.length+1));
-    num.array[num.length] = 0;
-    num.length += 1;
-  }
-
-  for (int i = num.length-1; i >= 0; i--){
-    unsigned int shiftedNum = num.array[i] << 1;
-    unsigned int carryFromTheNext;
-    if (i != 0){
-      carryFromTheNext = num.array[i-1] >> 31;
+int bigNumSubtract(BigNum* lhs, BigNum* rhs, BigNum* result){
+  if (lhs->isNotNeg == true & rhs->isNotNeg == false){
+    result->isNotNeg = true;
+    if (bigNumAbsLarger(lhs, rhs)){
+      bigNumAbsAdd(lhs,rhs,result);
     }
     else{
-      carryFromTheNext = 0;
-    }
-    num.array[i] = shiftedNum | carryFromTheNext;
-  }
-  return num;
-}
-
-//  << n
-BigNum shiftLeft(BigNum num, int n){
-  for(int i=0;i<n;i++){
-    num = shiftLeftOnce(num);
-  }
-  return num;
-}
-
-BigNum shiftRight(BigNum num, int n){
-  for(int i=0; i<n; i++){
-    num = shiftRightOnce(num);
-  }
-
-  return num;
-}
-
-unsigned int lo(unsigned int n){
-  return ((1U << 16)-1) & n;
-}
-
-unsigned int hi(unsigned int n){
-  return n >> 16;
-}
-
-BigNum multiply(BigNum lhs, BigNum rhs){
-
-  int temp_result_len = lhs.length + rhs.length;
-
-  BigNum result = intToBigNum(0);
-
-  for (int i=0;i<lhs.length;i++){
-    for (int j=0;j<rhs.length;j++){
-      unsigned long int l = lhs.array[i];
-      unsigned long int r = rhs.array[j];
-      unsigned long int lr = l * r;
-
-      unsigned long int base = (unsigned int)(lr % _2_32);
-      unsigned long int carry = (unsigned int) (lr / _2_32);
-
-      BigNum temp_big_num;
-      temp_big_num.isNotNeg = true;
-        
-      if (carry != 0){
-        temp_big_num.length = 2;
-        temp_big_num.array = realloc(temp_big_num.array, sizeof(unsigned int)*2);
-        temp_big_num.array[0] = (unsigned int) base;
-        temp_big_num.array[1] = (unsigned int) carry;
-      }else{
-        temp_big_num.length = 1;
-        temp_big_num.array = malloc(sizeof(unsigned int));
-        temp_big_num.array[0] = base;
-      }
-        
-      temp_big_num = shiftLeft(temp_big_num, (i+j)*32);
-
-      result = add(result, temp_big_num);
+      bigNumAbsAdd(rhs,lhs,result);
     }
   }
-
-  if (lhs.isNotNeg == rhs.isNotNeg || bigNumEqual(lhs, intToBigNum(0)) || bigNumEqual(rhs, intToBigNum(0))){
-    result.isNotNeg = true;
+  else if(lhs->isNotNeg == false & rhs->isNotNeg == true){
+    result->isNotNeg = false;
+    if (bigNumAbsLarger(lhs, rhs)){
+      bigNumAbsAdd(lhs,rhs,result);
+    }
+    else{
+      bigNumAbsAdd(rhs,lhs,result);
+    }
+  }
+  else if(lhs->isNotNeg == true & rhs->isNotNeg == true){
+    // 5 - 3
+    if(bigNumAbsLarger(lhs, rhs)){
+      result->isNotNeg = true;
+      bigNumAbsSubtract(lhs, rhs, result);
+    }
+    // 5 - 8
+    else{
+      result->isNotNeg = false;
+      bigNumAbsAdd(rhs, lhs, result);
+    }
   }
   else{
-    result.isNotNeg = false;
+    // (-5) - (-5) or (-5) - (-6)
+    if(bigNumAbsLarger(rhs, lhs) || bigNumAbsEqual(rhs,lhs)){
+      result->isNotNeg = true;
+      bigNumAbsSubtract(rhs, lhs, result);
   }
-
-  return result;
+  // (-5) - (-3)
+    else{
+      result->isNotNeg = false;
+      bigNumAbsSubtract(lhs, rhs, result);
+    }
+  }
+  return 0;
 }
 
-/*
-find remainder (%).
-12 % 5 = 2 
-12 % -5 = 2
--12 % 5 = -2
--12 % -5 = -2
-*/
-BigNum BigNumRemainder(BigNum lhs, BigNum rhs){
-  BigNum bigNumZero = intToBigNum(0);
-
-  if (bigNumEqual(rhs,bigNumZero)){
-    printf("div 0 error, return 0");
-    return bigNumZero;
+int bigNumMultiply(BigNum*lhs, BigNum* rhs, BigNum* result){
+  if (lhs->isNotNeg == rhs->isNotNeg){
+    result->isNotNeg = true;
+  }else{
+    result->isNotNeg = false;
   }
-  else{
-    BigNum q = quotient(lhs, rhs);
-    BigNum res = findRemainder(lhs, rhs, q);
 
-    return res;
+  size_t n = lhs->used + rhs->used + 1;
+
+  for (size_t i=0;i<=n;i++){
+    result->digit[i] = 0;
   }
-};
 
-BigNum findRemainder(BigNum lhs, BigNum rhs, BigNum quotient){
-  BigNum res;
-  res = subtract(lhs, multiply(rhs, quotient));
+  for(size_t i=0; i<=rhs->used; i++){
+    uint64_t c = 0;
+
+    for (size_t j=0; j<=lhs->used; j++){
+      uint64_t res_i_j = (uint64_t)result->digit[i+j];
+      uint64_t l_j_r_i =  (uint64_t)(lhs->digit[j]) * (uint64_t)(rhs->digit[i]);
+      uint64_t current_res = res_i_j + l_j_r_i + c;
+      
+      uint64_t res_base = current_res % _2_32_;
+      uint64_t res_carry = current_res / _2_32_;
+      
+      result->digit[i+j] = (uint32_t) res_base;
+      c = res_carry;
+    }
+
+    result->digit[i+(lhs->used)+1] = c;
+  }
+
+  // correct the result->used
+  for (size_t i=n; i>=0;i++){
+    if (result->digit[i]!=0 || i == 0){
+      result->used = i;
+    }
+  }
+  return 0;
+}
+
+int bigNumDivideOneDigit(BigNum* lhs, BigNum* rhs , BigNum* quotient, BigNum* remainder){
+  uint32_t rhs_number = rhs->digit[0];
+
+  for (size_t i=0;i<=lhs->used;i--){
+      quotient->digit[i]=0;
+  }
+
+  uint64_t temp = lhs->digit[lhs->used];
+
+  for(size_t i=lhs->used; i>=0;i--){
+    temp = temp * _2_32_ + lhs->digit[i];
+    quotient->digit[i] = (uint32_t) (temp / (uint64_t)rhs_number);
+    temp = temp % (uint64_t) rhs_number;
+  }
+
+  remainder->used = 0;
+  remainder->digit[0] = (uint32_t)temp;
+
+}
+
+int bigNumShiftLeft(BigNum* big_num, size_t n){
+  big_num->used += n;
+  for(size_t i=big_num->used; i>=n;i--){
+    big_num->digit[i] = big_num->digit[i-n];
+  }
+
+  for(size_t i=0;i<n;i++){
+    big_num->digit[i] = 0;
+  }
+
+  return 0;
+}
+
+// if n > big_num->used, set n = big_num->used
+int bigNumShiftRight(BigNum* big_num, size_t n){
+  if (n>big_num->used){
+    n = big_num->used;
+  }
   
-  return res;
-  }
-
-/* find quotient (//).
-12 // 5 = 2 
-12 // -5 = -2
--12 // 5 = -2
--12 // -5 = 2
-*/
-BigNum quotient(BigNum lhs, BigNum rhs){
-  BigNum bigNumZero = intToBigNum(0);
-
-  if (bigNumEqual(rhs,bigNumZero)){
-    printf("div 0 error, return 0");
-    return bigNumZero;
-  }
-  else if (bigNumAbsLessThan(lhs, rhs)){
-    return bigNumZero;
-  }
-  /* with Newton's Method, let's find the quotient.
-  see: http://yoxem.github.io/2019/10/12/tua7soo3ji7tu5huat4ian2sng3huat4/
-  */
-  else{
-    BigNum abs_lhs = lhs;
-    abs_lhs.isNotNeg = true;
-
-    BigNum abs_rhs = rhs;
-    abs_rhs.isNotNeg = true; // force abs_rhs be non-zero
-
-    BigNum y_k_minus_1 = intToBigNum(0); // y_(k-1)
-    BigNum y_k = intToBigNum(1); // y_k ; y_0 = 1
-
-    int p = lhs.length + 1;
-
-    while(! bigNumEqual(y_k, y_k_minus_1)){
-      y_k_minus_1 = y_k;
-      printf("y_k_minus_1: ");
-      print_num(y_k_minus_1);
-
-      BigNum _2y_k = multiply(intToBigNum(2), y_k);
-      printf("_2y_k: ");
-      print_num(_2y_k);
-      BigNum y_k_2_d = multiply(multiply(y_k, y_k), abs_rhs); // y_k^(2)*abs_rhs
-      printf("y_k_2_d: ");
-      print_num(y_k_2_d);
-
-      BigNum y_k_2_d_rightshift_p = shiftRight(y_k_2_d, p * 32); // (y_k^2 * abs_rhs) >> p
-      printf("y_k_2_d_rightshift_p");
-      print_num(y_k_2_d_rightshift_p);
-
-      y_k = subtract(_2y_k, y_k_2_d_rightshift_p);
-      printf("y_k");
-      print_num(y_k);
-
-
-    }
-
-    BigNum lhs_y_k = multiply(lhs, y_k); // lhs * y_k
-    BigNum quotient = shiftRight(lhs_y_k,p * 32); // lhs * y_k // >> p
-
-
-    BigNum remainder = subtract(abs_lhs,multiply(abs_rhs,quotient));
-    // if |lhs| - q * |rhs| < 0 ; adjust value of q by decrease q
-    while (bigNumLessThan(remainder, bigNumZero)){
-      quotient = subtract(quotient, intToBigNum(1));
-      remainder = subtract(abs_lhs,multiply(abs_rhs,quotient));
-    }
-    
-    // if |lhs| - q * |rhs| > |rhs|; adjust value of q by increase q
-    while (bigNumGreaterThan(remainder, abs_rhs)){
-      quotient = add(quotient, intToBigNum(1));
-      remainder = subtract(abs_lhs, multiply(abs_rhs, quotient));
-    }
-
-    if(lhs.isNotNeg != rhs.isNotNeg){
-      quotient.isNotNeg = false;
-    }
-
-    return quotient;
-  }
-}
-
-
-/* 
-convert to decminal number string.
-*/
-char* BigNumToDecStr(BigNum n){
-  char* result;
-
-
-  bool n_sign = n.isNotNeg;
-  n.isNotNeg = true; // set it to be non-zero
+  big_num->used -= n;
   
-  BigNum bigNumZero = intToBigNum(0);
-  BigNum bigNum10 = intToBigNum(10);
-
-  while(!bigNumEqual(n, bigNumZero)){
-    char* digitStr;
-    BigNum quotient_of_div_10 = quotient(n,bigNum10);
-    BigNum digitBigNum =  findRemainder(n, bigNum10, quotient_of_div_10);
-
-    unsigned int digit = digitBigNum.array[0];
-    sprintf(digitStr, "%u", digit);
-
-    char* new_result = malloc(sizeof(char)*(strlen(result)+1)); // strlen(digitStr) == 1
-    strcat(new_result, result);
-    strcat(new_result, digitStr);
-    
-    result = new_result;
-
-    n = quotient_of_div_10;
-    }
-
-  // if it is neg. num, add a minus "-" sign.
-  if (!n_sign){
-    char* result_sign = "-";
-    char* new_result = malloc(sizeof(char)*(strlen(result)+1));
-    strcat(new_result, result_sign);
-    strcat(new_result, result);
-
-    result = new_result;
-  };
-
-  return result;
-}
-
-void print_num(BigNum num){
-  printf("[");
-  for (int i=0; i<num.length; i++){
-    printf("%u, ", num.array[i]);
+  for(size_t i=0; i<big_num->used;i--){
+    big_num->digit[i] = big_num->digit[i+n];
   }
-  printf("]\n");
+
+  
+
+  return 0;
 }
 
-int main(void){
-    /*BigNum a = intToBigNum(-12345);Program terminated with signal SIGABRT, Aborted.
+int bigNumDivide(BigNum* lhs, BigNum* rhs, BigNum* quotient, BigNum* remainder){
 
-    BigNum b = intToBigNum(-74892074);
-    BigNum g = intToBigNum(4294967296/2-1);
-    g = shiftLeft(g, 3);
-    g = shiftRight(g, 3);*/
+  if (bigNumAbsLarger(rhs, lhs)){
+    quotient->used = 0;
+    quotient->digit[0] = 0;
 
-    /*
-
-    BigNum x1;
-    x1.isNotNeg = true;
-    x1.length = 2;
-
-    x1.array = malloc(sizeof(unsigned int) * 2);
-    x1.array[0] = 2576980387;
-    x1.array[1] = 429496729;
-    BigNum x2;
-    x2.isNotNeg = true;
-    x2.length = 1;
-    x2.array = malloc(sizeof(unsigned int) * 1);
-
-    x2.array[0] = 120;
-
-    BigNum z = multiply(x1, x2); */
-
-    BigNum y1 = intToBigNum(120);
-    BigNum y2 = intToBigNum(76);
-
-    BigNum x =  quotient(y1, y2);// quotient(intToBigNum(76),intToBigNum(4));
-    for(int i=0;i<x.length;i++){
-      printf("%d\t", x.array[i]);
+    remainder->used = lhs->used;
+    for (size_t i=0; i<= lhs->used;i++){
+      remainder->digit[i] = lhs->digit[i];
     }
-    // printf("%s", BigNumToDecStr(x)); */
 
-    /*
-    printf("%s", BigNumToDecStr(a));
-    printf("%s", BigNumToDecStr(b));
-    printf("%s", BigNumToDecStr(g));
-    */
-
-
-    // bool c = bigNumGreaterThan(a, b);
-    // bool d = bigNumLessThan(a, b);
-    // bool e = bigNumEqual(a, b);
-    
-    // BigNum l = get_length_n_zero_array(10 >)
     return 0;
+  }
+  else{
 
+    BigNum* bigNumZero;
+    bigNumInit(bigNumZero,1);
+    int32ToBigNum(bigNumZero, 0);
+
+    if(bigNumAbsEqual(rhs, bigNumZero)){
+      bigNumFree(bigNumZero);
+
+      return DivZero;
+    }else{
+      bigNumFree(bigNumZero);
+      remainder->isNotNeg = lhs->isNotNeg;
+
+      if(lhs->isNotNeg == rhs->isNotNeg){
+        quotient->isNotNeg = true;
+      }
+      else{
+        quotient->isNotNeg = false;
+      }
+
+      if (rhs->used == 0){
+        bigNumDivideOneDigit(lhs,rhs,quotient,remainder);
+      }
+      else{
+
+        size_t t = rhs->used; // rhs->used
+        
+        size_t diff_l_and_r = lhs->used-t;
+
+        for(size_t j=0;j<=lhs->used-t;j++){
+          quotient->digit[j] = 0;
+        }
+        /* todo : 2. While (x ≥ yb n−t ) do the following: q n−t ←q n−t + 1, x←x − yb n−t . */
+        bigNumCopy(lhs, remainder);
+
+        bigNumShiftLeft(rhs,diff_l_and_r);
+        while(!bigNumLess(remainder,rhs)){
+          quotient->digit[diff_l_and_r] = quotient->digit[diff_l_and_r] + 1;
+          bigNumAbsSubtract(remainder,rhs,remainder);
+        }
+
+        bigNumShiftRight(rhs,diff_l_and_r); // recover rhs to the right value;
+
+        for(size_t i=lhs->used;i>=t;i--){
+          if (lhs->digit[i]==rhs->digit[t]){
+            quotient->digit[i-t-1] = _2_32_ - 1;
+          }else{
+            uint64_t x_i = (uint64_t)(lhs->digit[i]);
+            uint64_t x_i_1 = (uint64_t)(lhs->digit[i-1]);
+            quotient->digit[i-t-1] = (uint32_t)((x_i * _2_32_ + x_i_1)/((uint64_t)(rhs->digit[t])));
+          }
+          
+          /* While (q i−t−1 (y t b + y t−1 ) > x i b 2 + x i−1 b + x i−2 )
+           do: q i−t−1 ←q i−t−1 − 1. */
+          BigNum* temp_lhs;
+          BigNum* temp_rhs;
+          bigNumInit(temp_lhs,3);
+          bigNumInit(temp_rhs,3);
+
+          uint64_t q_i_t_1_rhs_t = ((uint64_t)quotient->digit[i-t-1]*(uint64_t)rhs->digit[t]);
+          uint32_t temp_lhs_2 = (uint32_t)(q_i_t_1_rhs_t/_2_32_);
+          uint32_t temp_lhs_1_l = (uint32_t)(q_i_t_1_rhs_t %_2_32_);
+          uint64_t q_i_t_1_rhs_t_1 = (uint64_t)quotient->digit[i-t-1]*(uint64_t)rhs->digit[t-1];
+          uint32_t temp_lhs_1_r = (uint32_t)(q_i_t_1_rhs_t_1 / _2_32_);
+          uint32_t temp_lhs_1 = temp_lhs_1_l + temp_lhs_1_r;
+
+          uint32_t temp_lhs_cons = (uint32_t) (q_i_t_1_rhs_t_1 % _2_32_);
+          
+          temp_lhs->isNotNeg = true;
+          temp_lhs->digit[2] = temp_lhs_2;
+          temp_lhs->digit[1] = temp_lhs_1;
+          temp_lhs->digit[0] = temp_lhs_cons;
+
+          temp_rhs->isNotNeg = true;
+          temp_rhs->digit[2] = lhs->digit[i];
+          temp_rhs->digit[1] = lhs->digit[i-1];
+          temp_rhs->digit[0] = lhs->digit[i-2];
+
+          while(bigNumLarger(temp_lhs,temp_rhs)){
+            quotient->digit[i-t-1] = quotient->digit[i-t-1] - 1;
+          }
+          bigNumFree(temp_lhs);
+          bigNumFree(temp_rhs);
+
+          /* x←x − q i−t−1 yb i−t−1 . */
+          BigNum* rhs_clone;
+          bigNumInit(rhs_clone, rhs->used);
+          bigNumCopy(rhs,rhs_clone);
+          bigNumShiftRight(rhs_clone,i-t-1);
+          
+          for (size_t k=0;k<=rhs_clone->used;k++){
+            rhs_clone->digit[k] *= quotient->digit[i-t-1];
+          }
+
+          bigNumSubtract(remainder,rhs_clone,remainder);
+
+          bigNumFree(rhs_clone);
+
+
+          
+          if(remainder->isNotNeg == false){
+            BigNum* rhs_clone2;
+            bigNumInit(rhs_clone2, rhs->used);
+            bigNumCopy(rhs,rhs_clone2);
+            bigNumShiftRight(rhs_clone2,i-t-1);
+
+            bigNumAdd(remainder,rhs_clone2,remainder);
+            quotient->digit[i-t-1] = quotient->digit[i-t-1] - 1;
+
+            BigNumfree(rhs_clone2);
+
+          }
+        }
+
+      }
+    }
+
+
+
+  }
+}
+  
+int bigNumAdd(BigNum* lhs, BigNum* rhs, BigNum* result){
+  if (lhs->isNotNeg == true & rhs->isNotNeg == true){
+    result->isNotNeg = true;
+    if (bigNumAbsLarger(lhs, rhs)){
+      bigNumAbsAdd(lhs,rhs,result);
+    }
+    else{
+      bigNumAbsAdd(rhs,lhs,result);
+    }
+  }
+  else if (lhs->isNotNeg == false & rhs->isNotNeg == false){
+    result->isNotNeg = false;
+    if(bigNumAbsLarger(lhs, rhs)){
+      bigNumAbsAdd(lhs, rhs, result);
+    }
+    else{
+      bigNumAbsAdd(rhs, lhs, result);
+    }
+  }
+  else if (lhs->isNotNeg == true & rhs->isNotNeg == false){
+    // 5 + (-3)
+    if(bigNumAbsLarger(lhs, rhs)){
+      result->isNotNeg = true;
+      bigNumAbsSubtract(lhs, rhs, result);
+    }
+    // 5 + (-8)
+    else{
+      result->isNotNeg = false;
+      bigNumAbsAdd(rhs, lhs, result);
+    }
+  }
+  else{
+    // (-5) + (5) or (-5) + (6)
+    if(bigNumAbsLarger(rhs, lhs) || bigNumAbsEqual(rhs,lhs)){
+      result->isNotNeg = true;
+      bigNumAbsSubtract(rhs, lhs, result);
+    }
+    // (-5) + (3)
+    else{
+      result->isNotNeg = false;
+      bigNumAbsSubtract(lhs, rhs, result);
+    }
+  }
+
+  return 0;
+}
+
+void strrev(char* str){
+  if( str == 0 || *str == 0){
+    return str;
+  }
+
+  char x;
+  int i = 0;
+  int j = strlen(str) - 1;
+
+  while(i > j){
+    x = str[i];
+    str[i] = str[j];
+    str[j] = x;
+    i++;
+    j--;
+  }
+
+  return str;
+}
+
+// BigNum to str (should be calloc-ed first) in base 
+int BigNumToStr(BigNum* num, char* str, uint32_t base){
+  if (base < 2 || base > 64){
+    return IllegalBase;
+  }
+  else if (maxlen < 2){
+    return SizeTooSmall;
+  }
+  else if (num->used == 0 & num->digit[0] == 0){ // num == 0
+    *str++ = '0';
+    *str++ = '\0';
+    return 0;
+  }else{
+    char* negChar = NULL;
+    if (num->isNotNeg == false){
+      negChar = '-\0';
+    }
+
+    size_t i = 0;
+    BigNum* x; 
+    BigNum* q; //quotient
+    BigNum* b; // base
+    BigNum* r; // remainder
+    bigNumInit(x, num->used);
+    bigNumInit(q, num->used);
+    bigNumInit(b, 0);
+    bigNumInit(r, 0);
+
+    bigNumCopy(num,x);
+    int32ToBigNum(base,b);
+    
+    bigNumDivide(x,b,q,r);
+    char str_i = (char)(((int)r->digit[0]) + '0');
+    *str++ = str_i;
+    
+    while(q->used>0||q->digit[0]>0){
+      i++;
+      int divide_error_code = bigNumDivide(x,b,q,r);
+      if (divide_error_code){
+        return divide_error_code;
+      }
+      bigNumCopy(q,x);
+
+      char str_i = (char)(((int)r->digit[0]) + '0');
+      *str++ = str_i;
+    }
+    *str++ = '\0';
+
+    if(negChar != NULL){
+      strcat(str, negChar);
+    }
+
+    strrev(str);
+
+    bigNumFree(x); 
+    bigNumFree(q); //quotient
+    bigNumFree(b); // base
+    bigNumFree(r); 
+
+  }
+}
+
+void main(){
+  printf("Hello world!");
 }
