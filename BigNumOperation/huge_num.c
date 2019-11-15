@@ -99,7 +99,7 @@ bool bigNumAbsEqual(BigNum* lhs, BigNum* rhs){
     return false;
   }
   else{
-    for(size_t i=lhs->used;i>=0;i--){
+    for(size_t i=lhs->used;i != -1;i--){
       if (lhs->digit[i]!=rhs->digit[i]){
         return false;
       }
@@ -567,7 +567,7 @@ void strrev(char* str){
   int i = 0;
   int j = strlen(str) - 1;
 
-  while(i > j){
+  while(i < j){
     x = str[i];
     str[i] = str[j];
     str[j] = x;
@@ -753,6 +753,8 @@ int bigNumToStr(BigNum* num, char* str, uint32_t base){
     }
     *str++ = '\0';
 
+    str = str_orig;
+
     if(negChar != NULL){
       strcat(str, negChar);
     }
@@ -775,7 +777,7 @@ void main(){
   strToBigNum(a, "-123456778122345566", 10);
   char* s = calloc(sizeof(char),20);
   bigNumToStr(a,s,10);
-  printf("%s", bigNumToStr(a,s,10));
+  printf("%s", s);
 
   bigNumFree(a);
   free(s);
