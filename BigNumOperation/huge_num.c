@@ -6,6 +6,7 @@
 #include "huge_num.h"
 
 #define _2_32_ 4294967296
+#define OVER_BOUND 999
 
 typedef struct BigNum {
   bool isNotNeg;
@@ -86,6 +87,9 @@ bool bigNumAbsLarger(BigNum* lhs, BigNum* rhs){
       if (lhs->digit[i]>rhs->digit[i]){
         return true;
       }
+      if(lhs->digit[i]<rhs->digit[i]){
+        return false;
+      }
     }
     return false;
   }
@@ -154,7 +158,7 @@ int bigNumAbsAdd(BigNum* bigger, BigNum* smaller, BigNum* result){
 
     uint64_t res = (b_i + s_i + carry);
 
-    if (res > _2_32_){
+    if (res >= _2_32_){
       result->digit[i] = (uint32_t)(res - _2_32_);
       carry = 1;
     }
@@ -186,7 +190,7 @@ int bigNumAbsSubtract(BigNum* bigger, BigNum* smaller, BigNum* result){
     int64_t b_i = bigger->digit[i];
     int64_t s_i;
 
-    if(n>smaller->used){
+    if(i>smaller->used){
       s_i = 0;
     }
     else{
@@ -289,9 +293,10 @@ int bigNumMultiply(BigNum*lhs, BigNum* rhs, BigNum* result){
 
   size_t n = lhs->used + rhs->used + 1;
 
+  
   for (size_t i=0;i<=n;i++){
     result->digit[i] = 0;
-  }
+  } 
 
   for(size_t i=0; i<=rhs->used; i++){
     uint64_t c = 0;
@@ -348,7 +353,7 @@ int bigNumShiftLeft(BigNum* big_num, size_t n){
   }
 
   big_num->used += n;
-  for(size_t i=big_num->used; i>=n;i--){
+  for(size_t i=big_num->used; i != n-1;i--){
     big_num->digit[i] = big_num->digit[i-n];
   }
 
@@ -367,7 +372,7 @@ int bigNumShiftRight(BigNum* big_num, size_t n){
   
   big_num->used -= n;
   
-  for(size_t i=0; i<big_num->used;i++){
+  for(size_t i=0; i<=big_num->used;i++){
     big_num->digit[i] = big_num->digit[i+n];
   }
 
@@ -390,6 +395,10 @@ int bigNumDivide(BigNum* lhs, BigNum* rhs, BigNum* quotient, BigNum* remainder){
     return 0;
   }
   else{
+    bool lhsIsNotNeg = lhs->isNotNeg;
+    bool rhsIsNotNeg = rhs->isNotNeg;
+    bool quotientIsNotNeg;
+    bool remainderIsNotNeg;
 
     BigNum* bigNumZero;
     bigNumInit(&bigNumZero,1);
@@ -401,114 +410,187 @@ int bigNumDivide(BigNum* lhs, BigNum* rhs, BigNum* quotient, BigNum* remainder){
       return DivZero;
     }else{
       bigNumFree(bigNumZero);
-      remainder->isNotNeg = lhs->isNotNeg;
+      remainderIsNotNeg = lhs->isNotNeg;
 
       if(lhs->isNotNeg == rhs->isNotNeg){
-        quotient->isNotNeg = true;
+        quotientIsNotNeg = true;
       }
       else{
-        quotient->isNotNeg = false;
+        quotientIsNotNeg = false;
       }
+
+      // set the isNotNeg to true temporily
+      lhs->isNotNeg = true;
+      rhs->isNotNeg = true;
+      quotient->isNotNeg = true;
+      remainder->isNotNeg = true;
 
       if (rhs->used == 0){
-        return bigNumDivideOneDigit(lhs,rhs,quotient,remainder);
+        bigNumDivideOneDigit(lhs,rhs,quotient,remainder);
+      }else{
+        bigNumDivideOther(lhs,rhs,quotient,remainder);
       }
-      else{
 
-        size_t t = rhs->used; // rhs->used
+
+        // recover to their isNotNeg
+        lhs->isNotNeg = lhsIsNotNeg;
+        rhs->isNotNeg = rhsIsNotNeg;
+        quotient->isNotNeg = quotientIsNotNeg;
+        remainder->isNotNeg = remainderIsNotNeg;
+
+
         
-        size_t diff_l_and_r = lhs->used-t;
-
-        for(size_t j=0;j<=lhs->used-t;j++){
-          quotient->digit[j] = 0;
-        }
-        /* todo : 2. While (x ≥ yb n−t ) do the following: q n−t ←q n−t + 1, x←x − yb n−t . */
-        bigNumCopy(lhs, remainder);
-
-        bigNumShiftLeft(rhs,diff_l_and_r);
-        while(!bigNumLess(remainder,rhs)){
-          quotient->digit[diff_l_and_r] = quotient->digit[diff_l_and_r] + 1;
-          bigNumAbsSubtract(remainder,rhs,remainder);
-        }
-
-        bigNumShiftRight(rhs,diff_l_and_r); // recover rhs to the right value;
-
-        for(size_t i=lhs->used;i>=t;i--){
-          if (lhs->digit[i]==rhs->digit[t]){
-            quotient->digit[i-t-1] = _2_32_ - 1;
-          }else{
-            uint64_t x_i = (uint64_t)(lhs->digit[i]);
-            uint64_t x_i_1 = (uint64_t)(lhs->digit[i-1]);
-            quotient->digit[i-t-1] = (uint32_t)((x_i * _2_32_ + x_i_1)/((uint64_t)(rhs->digit[t])));
-          }
-          
-          /* While (q i−t−1 (y t b + y t−1 ) > x i b 2 + x i−1 b + x i−2 )
-           do: q i−t−1 ←q i−t−1 − 1. */
-          BigNum* temp_lhs;
-          BigNum* temp_rhs;
-          bigNumInit(&temp_lhs,3);
-          bigNumInit(&temp_rhs,3);
-
-          uint64_t q_i_t_1_rhs_t = ((uint64_t)quotient->digit[i-t-1]*(uint64_t)rhs->digit[t]);
-          uint32_t temp_lhs_2 = (uint32_t)(q_i_t_1_rhs_t/_2_32_);
-          uint32_t temp_lhs_1_l = (uint32_t)(q_i_t_1_rhs_t %_2_32_);
-          uint64_t q_i_t_1_rhs_t_1 = (uint64_t)quotient->digit[i-t-1]*(uint64_t)rhs->digit[t-1];
-          uint32_t temp_lhs_1_r = (uint32_t)(q_i_t_1_rhs_t_1 / _2_32_);
-          uint32_t temp_lhs_1 = temp_lhs_1_l + temp_lhs_1_r;
-
-          uint32_t temp_lhs_cons = (uint32_t) (q_i_t_1_rhs_t_1 % _2_32_);
-          
-          temp_lhs->isNotNeg = true;
-          temp_lhs->digit[2] = temp_lhs_2;
-          temp_lhs->digit[1] = temp_lhs_1;
-          temp_lhs->digit[0] = temp_lhs_cons;
-
-          temp_rhs->isNotNeg = true;
-          temp_rhs->digit[2] = lhs->digit[i];
-          temp_rhs->digit[1] = lhs->digit[i-1];
-          temp_rhs->digit[0] = lhs->digit[i-2];
-
-          while(bigNumLarger(temp_lhs,temp_rhs)){
-            quotient->digit[i-t-1] = quotient->digit[i-t-1] - 1;
-          }
-          bigNumFree(temp_lhs);
-          bigNumFree(temp_rhs);
-
-          /* x←x − q i−t−1 yb i−t−1 . */
-          BigNum* rhs_clone;
-          bigNumInit(&rhs_clone, rhs->used);
-          bigNumCopy(rhs,rhs_clone);
-          bigNumShiftRight(rhs_clone,i-t-1);
-          
-          for (size_t k=0;k<=rhs_clone->used;k++){
-            rhs_clone->digit[k] *= quotient->digit[i-t-1];
-          }
-
-          bigNumSubtract(remainder,rhs_clone,remainder);
-
-          bigNumFree(rhs_clone);
-
-
-          
-          if(remainder->isNotNeg == false){
-            BigNum* rhs_clone2;
-            bigNumInit(&rhs_clone2, rhs->used);
-            bigNumCopy(rhs,rhs_clone2);
-            bigNumShiftRight(rhs_clone2,i-t-1);
-
-            bigNumAdd(remainder,rhs_clone2,remainder);
-            quotient->digit[i-t-1] = quotient->digit[i-t-1] - 1;
-
-            bigNumFree(rhs_clone2);
-
-          }
-        }
-
         return 0;
 
-      }
+    
     }
   }
+}
+
+/* big num division with larger digits(num->used >= 1). The Algorithm is from HoAC.
+https://github.com/libtom/libtommath/blob/develop/s_mp_div_school.c
+*/
+int bigNumDivideOther(BigNum* lhs, BigNum* rhs, BigNum* quotient, BigNum* remainder){
+  // normalization such that y_t * normalcoeff >= 2 ** 32 / 2
+  uint32_t normalcoeff = (uint32_t)((_2_32_ / 2 + 1) / (uint64_t)rhs->digit[rhs->used]);
+
+  BigNum* bigNumNormalCoeff;
+  bigNumInit(&bigNumNormalCoeff, 1);
+
+  uint32ToBigNum(bigNumNormalCoeff, normalcoeff);
+
+  BigNum* temp;
+  bigNumInit(&temp, lhs->used+2);
+  // magnify temporily
+  bigNumMultiply(lhs, bigNumNormalCoeff, temp);
+  bigNumCopy(temp, lhs);
+  bigNumMultiply(rhs, bigNumNormalCoeff, temp);
+  bigNumCopy(temp, rhs);
+
+
+  size_t t = rhs->used; // rhs->used
+
+  size_t diff_l_and_r = lhs->used-t;
+  quotient->used = diff_l_and_r;
+
+  for(size_t j=0;j<=diff_l_and_r;j++){
+    quotient->digit[j] = 0;
+  }        
+
+  // the algorithm is from HoAC Ch14.
+  /* 2. While (x ≥ yb n−t ) do the following: q n−t ←q n−t + 1, x←x − yb n−t . */
+  bigNumCopy(lhs, remainder);
+
+
+  bigNumShiftLeft(rhs,diff_l_and_r);
+  while(!bigNumLess(remainder,rhs)){
+    quotient->digit[diff_l_and_r]++;
+    bigNumAbsSubtract(remainder,rhs,remainder);
+  }
+
+  bigNumShiftRight(rhs,diff_l_and_r); // recover rhs to the right value;
+
+  for(size_t i=remainder->used;i >= t + 1;i--){
+    if (remainder->digit[i]==rhs->digit[t]){
+      quotient->digit[i-t-1] = _2_32_ - 1;
+    }else{
+      uint64_t x_i = (uint64_t)(remainder->digit[i]);
+      uint64_t x_i_1 = (uint64_t)(remainder->digit[i-1]);
+      quotient->digit[i-t-1] = (uint32_t)((x_i * _2_32_ + x_i_1)/((uint64_t)(rhs->digit[t])));
+    }
+    
+    /* While (q i−t−1 (y t b + y t−1 ) > x i b 2 + x i−1 b + x i−2 )
+      do: q i−t−1 ←q i−t−1 − 1. */
+    BigNum* temp_lhs;
+    BigNum* temp_rhs;
+    BigNum* temp2;
+    
+    bigNumInit(&temp_lhs,3);
+    bigNumInit(&temp_rhs,3);
+    bigNumInit(&temp2,3);
+    
+    quotient->digit[i-t-1] += 1;
+
+    do{
+      quotient->digit[i-t-1] -= 1;
+      
+
+
+
+
+      temp_lhs->isNotNeg = true;
+      temp_lhs->digit[1] = ((t - 1) < 0) ? 0u : rhs->digit[t];
+      temp_lhs->digit[0] = rhs->digit[t-1];
+      temp_lhs->used = 1;
+
+      uint32ToBigNum(temp, quotient->digit[i-t-1]);
+
+      
+      bigNumMultiply(temp_lhs, temp, temp2);
+      bigNumCopy(temp2, temp_lhs);
+      bigNumFree(temp2);
+
+      temp_rhs->isNotNeg = true;
+      temp_rhs->used = 2;
+      temp_rhs->digit[2] = remainder->digit[i];
+      temp_rhs->digit[1] = ((i - 1) < 0) ? 0u : remainder->digit[i-1];
+      temp_rhs->digit[0] = ((i - 2) < 0) ? 0u : remainder->digit[i-2];
+
+    }while(bigNumLarger(temp_lhs,temp_rhs));
+    
+    bigNumFree(temp_lhs);
+    bigNumFree(temp_rhs);
+
+    /* x←x − q i−t−1 yb i−t−1 . */
+    BigNum* rhs_clone;
+    bigNumInit(&rhs_clone, (rhs->used)+1);
+    bigNumCopy(rhs,rhs_clone);
+    bigNumShiftLeft(rhs_clone,i-t-1);
+    
+    uint32ToBigNum(temp, quotient->digit[i-t-1]);
+    bigNumMultiply(rhs_clone,temp,temp2);
+    bigNumCopy(temp2, rhs_clone);
+
+    bigNumSubtract(remainder,rhs_clone,remainder);
+
+    bigNumFree(rhs_clone);
+    bigNumFree(temp2);
+
+
+    
+    if(remainder->isNotNeg == false){
+      BigNum* rhs_clone2;
+      bigNumInit(&rhs_clone2, (rhs->used)+1);
+      bigNumCopy(rhs,rhs_clone2);
+      bigNumShiftLeft(rhs_clone2,i-t-1);
+
+      bigNumAdd(remainder,rhs_clone2,remainder);
+      quotient->digit[i-t-1] = quotient->digit[i-t-1] - 1;
+
+      bigNumFree(rhs_clone2);
+
+    }
+  }
+
+
+  BigNum* temp3;
+  bigNumInit(temp3, lhs->used+1);
+
+  bigNumDivide(remainder, bigNumNormalCoeff, temp3, temp);
+  bigNumCopy(temp3, remainder);
+  bigNumDivide(lhs, bigNumNormalCoeff, temp3, temp);
+  bigNumCopy(temp3, lhs);
+  bigNumDivide(rhs, bigNumNormalCoeff, temp3, temp);
+  bigNumCopy(temp3, rhs);
+  bigNumFree(temp3);
+
+
+  bigNumClearZero(remainder, remainder->used);
+  bigNumClearZero(quotient, quotient->used);
+
+  bigNumFree(temp);
+
+  bigNumFree(bigNumNormalCoeff);
 }
   
 int bigNumAdd(BigNum* lhs, BigNum* rhs, BigNum* result){
@@ -577,9 +659,9 @@ void strrev(char* str){
 
 }
 
-// str to num (result num, should be inited first) in base (2 ~ 64).
+// str to num (result num, should be inited first) in base (2 ~ 16).
 int strToBigNum(BigNum* num, char* str, uint32_t base){
-  if (base < 2 || base > 64){
+  if (base != 2 & base != 8 & base != 10 & base != 16 ){
     return IllegalBase;
   }
 
@@ -595,9 +677,9 @@ int strToBigNum(BigNum* num, char* str, uint32_t base){
 
 
   for (size_t i= digitBorder; i<strlen(str); i++){
-    int32_t digit = str[i] - '0';
+    int32_t digit = hexCharToStr(str[i]);
 
-    if(digit < 0 || digit > 9){
+    if(isOverBorder(digit, base)){
       return OverBorder;
     }
     else{
@@ -614,6 +696,17 @@ int strToBigNum(BigNum* num, char* str, uint32_t base){
 
   return 0;
 }
+
+bool isOverBorder(int32_t digit, uint32_t base){
+  if (digit < 0 || digit >= base){
+    return true;
+  }
+  else{
+    return false;
+  }
+};
+
+
 
 bool is16base(char c){
   if (c >= '0' & c <= '9'){
@@ -636,10 +729,10 @@ void strToBigNumAux(BigNum* num, int32_t digit, uint32_t base){
   BigNum* bigNumDigit;
   BigNum* tempResult;
 
-  bigNumInit(&numTimesBase, (num->used)+1);
+  bigNumInit(&numTimesBase, (num->used)+2);
   bigNumInit(&bigNumBase, 1);
   bigNumInit(&bigNumDigit, 1);
-  bigNumInit(&tempResult, (num->used)+1);
+  bigNumInit(&tempResult, (num->used)+2);
 
   int32ToBigNum(bigNumBase,(int32_t)base);
   int32ToBigNum(bigNumDigit, digit);
@@ -664,55 +757,25 @@ int32_t hexCharToStr(char c){
     return c - 'a' + 10;
   }
   // A~F
-  else{
+  else if (c >='A' & c <= 'F'){
     return c - 'A' + 10;
   }
+  else{
+    return  OVER_BOUND; // OverBound
+  }
 }
 
-// BigNum to str (should be calloc-ed first) in 16-base
-int HexbigNumToStr(BigNum* num, char* str){
-
-  uint32_t base = 16;
-  size_t digitBorder = 0; // the border of the digit (0~9)
-
-  if(str[0] == '-'){
-    digitBorder = 1; // the border of the digit (0~9);
-  }
-
-  // set result num to be 0
-  num->used = 0;
-  num->digit[0] = 0;
 
 
-  for (size_t i=digitBorder; i<strlen(str); i++){
-
-    if (!is16base(str[i])){
-      return OverBorder;
-    }else{
-
-      int32_t digit = hexCharToStr(str[i]);
-
-      strToBigNumAux(num,digit,base);
-    }
-  }
-
-  bool isNeg = (str[0] == '-') & (num->digit>0 || num->used>0);
-
-  if (isNeg){
-    num->isNotNeg = false;
-  }
-
-  return 0;
-}
-
-// BigNum to str (should be calloc-ed first) in base (2 / 8 / 10 / 16 / 64)
+// BigNum to str (should be calloc-ed first) in base (2 / 8 / 10 / 16)
 int bigNumToStr(BigNum* num, char* str, uint32_t base){
-  if (base != 2 & base != 8 & base != 10 & base != 16 & base != 64){
-    return IllegalBase;
+  // clear the string
+  if (strlen(str) !=0){
+    memset(str,0,sizeof(char)*strlen(str));
   }
 
-  if (base == 16){
-    return HexbigNumToStr(num, str);
+  if (base != 2 & base != 8 & base != 10 & base != 16){
+    return IllegalBase;
   }
   
   else if (num->used == 0 & num->digit[0] == 0){ // num == 0
@@ -730,10 +793,10 @@ int bigNumToStr(BigNum* num, char* str, uint32_t base){
     BigNum* q; //quotient
     BigNum* b; // base
     BigNum* r; // remainder
-    bigNumInit(&x, num->used);
-    bigNumInit(&q, num->used);
-    bigNumInit(&b, 0);
-    bigNumInit(&r, 0);
+    bigNumInit(&x, num->used+1);
+    bigNumInit(&q, num->used+1);
+    bigNumInit(&b, 1);
+    bigNumInit(&r, 1);
 
     bigNumCopy(num,x);
     int32ToBigNum(b, (int32_t)base);
@@ -748,7 +811,12 @@ int bigNumToStr(BigNum* num, char* str, uint32_t base){
       }
       bigNumCopy(q,x);
 
-      char str_i = (char)(((int)r->digit[0]) + '0');
+      char str_i; // storing current digit char
+      if (base == 16){
+        str_i = intToHexChar(r->digit[0]);
+      }else{
+        str_i = (char)(((int)r->digit[0]) + '0');
+      }
       *str++ = str_i;
     }
     *str++ = '\0';
@@ -771,14 +839,110 @@ int bigNumToStr(BigNum* num, char* str, uint32_t base){
   return 0;
 }
 
+uint32_t uint32ToBigNum(BigNum* num, uint32_t ui32Num){
+    num->isNotNeg = true;
+    num->digit[0] = ui32Num;
+    num->used = 0;
+  
+
+    return 0;
+}
+
+// 0 ~ 9 => '0' ~ '9' ; 10 ~ 15 => 'a' ~ 'f'
+char intToHexChar(int i){
+  if (i < 10){
+    return (char) (i + '0');
+  }
+  // 'a' ~ 'f'
+  else{
+    return (char) (i - 10 + 'a');
+  }
+}
+
 void main(){
   BigNum* a;
+  BigNum* b;
   bigNumInit(&a,88);
-  strToBigNum(a, "-123456778122345566", 10);
-  char* s = calloc(sizeof(char),20);
-  bigNumToStr(a,s,10);
-  printf("%s", s);
+  bigNumInit(&b,88);
+  strToBigNum(a, "-123456778122345566123345", 10);
+  strToBigNum(b, "-12345677812234556632254534", 10);
+  char* s = calloc(sizeof(char),100);
+  bigNumToStr(a,s,2);// -11010001001001001101011111000011000000011101010110000010000110011010101010001
+  printf("%s\n", s);
+  bigNumToStr(a,s,8); // -32111153703003526020632521
+  printf("%s\n", s);
+  bigNumToStr(a,s,10); // -123456778122345566123345
+  printf("%s\n", s);
+  bigNumToStr(a,s,16); // -1a249af8603ab0433551
+  printf("%s\n", s);
+  printf("%s\n", s);
+  strToBigNum(b, "-11010001001001001101011111000011000000011101010110000010000110011010101010001", 2);
+  bigNumToStr(b,s,10);
+  printf("%s\n", s); // -123456778122345566123345
+  strToBigNum(b, "-32111153703003526020632521", 8);
+  bigNumToStr(b,s,10); // -123456778122345566123345
+  printf("%s\n", s);
+  strToBigNum(b, "-123456778122345566123345", 10);
+  bigNumToStr(b,s,10); // -123456778122345566123345
+  printf("%s\n", s);
+  strToBigNum(b, "-1a249af8603ab0433551", 16);
+  
+  BigNum* x1;
+  BigNum* x2;
+  BigNum* x3;
+  BigNum* x4;
+  bigNumInit(&x1,5);
+  bigNumInit(&x2,5);
+  bigNumInit(&x3,10);
+  bigNumInit(&x4,10);
+  strToBigNum(x1, "-340282366920938463463374607431768211455", 10);
+  strToBigNum(x2, "-340282366920938463463374607431768211457", 10);
+  strToBigNum(x4, "7", 10);
+  bigNumMultiply(x1,x2,x3);
+  bigNumToStr(x3,s,10); // 115792089237316195423570985008687907853269984665640564039457584007913129639935
+  printf("%s\n", s);
+  bigNumToStr(x3,s,16); // ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+  printf("%s\n", s);
+  bigNumAdd(x1,x2,x3);
+  bigNumToStr(x3,s,10); // -680564733841876926926749214863536422912
+  printf("%s\n", s);
+  bigNumSubtract(x1,x2,x3);
+  bigNumToStr(x3,s,10);
+  printf("%s\n", s); // 2
 
-  bigNumFree(a);
-  free(s);
+  strToBigNum(x1, "340282366920938463463374607431768211461", 10);
+  bigNumAbsSubtract(x1, x4, x3);
+  bigNumToStr(x3,s,10);
+  printf("%s\n", s); // 340282366920938463463374607431768211454
+
+  BigNum *fac100;
+  BigNum *bigNumI;
+
+  // factorial 100 (i.e. 100!) = 93326215443944152681699238856266700490715968264381621468592963895217599993229915608941463976156518286253697920827223758251185210916864000000000000000000000000
+  bigNumInit(&fac100, 1000);
+  int32ToBigNum(fac100, 1);
+  bigNumInit(&bigNumI, 1);
+  char* stringfac100 = malloc(sizeof(char)* 1000);
+
+  for (int i=1;i<=100;i++){
+    int32ToBigNum(bigNumI,i);
+    BigNum *bigNumTemp;
+    bigNumInit(&bigNumTemp, 1000);
+    bigNumMultiply(fac100,bigNumI,bigNumTemp);
+    bigNumCopy(bigNumTemp, fac100);
+    bigNumFree(bigNumTemp);
+  }
+
+  bigNumToStr(fac100, stringfac100, 10);
+
+  printf(stringfac100);
+
+  strToBigNum(x1, "432342134213421948921303840923289032829489328", 10);
+  strToBigNum(x2, "12341234134913489343241234143231", 10);
+
+  bigNumDivide(x1,x2,x3,x4);
+  bigNumToStr(x3,s,10);
+  printf(s);
+
+
 }

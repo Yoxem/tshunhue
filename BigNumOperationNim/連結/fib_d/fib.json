@@ -1,0 +1,9 @@
+{"compile":[
+["/home/yoxem/.cache/nim/fib_d/stdlib_system.nim.c", "gcc -c  -w  -I/usr/local/stow/nim/lib -I'/home/yoxem/桌面/tshunhue/BigNumOperationNim/連結' -o /home/yoxem/.cache/nim/fib_d/stdlib_system.nim.c.o /home/yoxem/.cache/nim/fib_d/stdlib_system.nim.c"],
+["/home/yoxem/.cache/nim/fib_d/@mfib.nim.c", "gcc -c  -w  -I/usr/local/stow/nim/lib -I'/home/yoxem/桌面/tshunhue/BigNumOperationNim/連結' -o /home/yoxem/.cache/nim/fib_d/@mfib.nim.c.o /home/yoxem/.cache/nim/fib_d/@mfib.nim.c"]],
+"link":[
+"/home/yoxem/.cache/nim/fib_d/stdlib_system.nim.c.o",
+"/home/yoxem/.cache/nim/fib_d/@mfib.nim.c.o"
+],
+"linkcmd": "gcc   -o '/home/yoxem/桌面/tshunhue/BigNumOperationNim/連結/fib'  /home/yoxem/.cache/nim/fib_d/stdlib_system.nim.c.o /home/yoxem/.cache/nim/fib_d/@mfib.nim.c.o    -ldl"
+}
