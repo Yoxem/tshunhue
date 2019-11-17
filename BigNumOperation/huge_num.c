@@ -788,7 +788,6 @@ int bigNumToStr(BigNum* num, char* str, uint32_t base){
       negChar = "-\0";
     }
 
-    size_t i = 0;
     BigNum* x; 
     BigNum* q; //quotient
     BigNum* b; // base
@@ -804,7 +803,6 @@ int bigNumToStr(BigNum* num, char* str, uint32_t base){
     char* str_orig = str;
     
     while(x->used>0||x->digit[0]>0){
-      i++;
       int divide_error_code = bigNumDivide(x,b,q,r);
       if (divide_error_code){
         return divide_error_code;
