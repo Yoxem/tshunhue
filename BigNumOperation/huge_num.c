@@ -574,7 +574,7 @@ int bigNumDivideOther(BigNum* lhs, BigNum* rhs, BigNum* quotient, BigNum* remain
 
 
   BigNum* temp3;
-  bigNumInit(temp3, lhs->used+1);
+  bigNumInit(&temp3, lhs->used+1);
 
   bigNumDivide(remainder, bigNumNormalCoeff, temp3, temp);
   bigNumCopy(temp3, remainder);
