@@ -285,6 +285,8 @@ int bigNumSubtract(BigNum* lhs, BigNum* rhs, BigNum* result){
 }
 
 int bigNumMultiply(BigNum*lhs, BigNum* rhs, BigNum* result){
+
+  
   if (lhs->isNotNeg == rhs->isNotNeg){
     result->isNotNeg = true;
   }else{
@@ -292,28 +294,33 @@ int bigNumMultiply(BigNum*lhs, BigNum* rhs, BigNum* result){
   }
 
   size_t n = lhs->used + rhs->used + 1;
+  uint32_t* temp_result = malloc(sizeof(uint32_t)*n);
 
   
   for (size_t i=0;i<=n;i++){
-    result->digit[i] = 0;
+    temp_result[i] = 0;
   } 
 
   for(size_t i=0; i<=rhs->used; i++){
     uint64_t c = 0;
 
     for (size_t j=0; j<=lhs->used; j++){
-      uint64_t res_i_j = (uint64_t)result->digit[i+j];
+      uint64_t res_i_j = (uint64_t)temp_result[i+j];
       uint64_t l_j_r_i =  (uint64_t)(lhs->digit[j]) * (uint64_t)(rhs->digit[i]);
       uint64_t current_res = res_i_j + l_j_r_i + c;
       
       uint64_t res_base = current_res % _2_32_;
       uint64_t res_carry = current_res / _2_32_;
       
-      result->digit[i+j] = (uint32_t) res_base;
+      temp_result[i+j] = (uint32_t) res_base;
       c = res_carry;
     }
 
-    result->digit[i+(lhs->used)+1] = c;
+    temp_result[i+(lhs->used)+1] = c;
+  }
+  
+  for(size_t i=0;i<=n;i++){
+	  result->digit[i] = temp_result[i];
   }
 
   // correct the result->used
@@ -382,14 +389,21 @@ int bigNumShiftRight(BigNum* big_num, size_t n){
 }
 
 int bigNumDivide(BigNum* lhs, BigNum* rhs, BigNum* quotient, BigNum* remainder){
+	
+	// set temp variables
+	BigNum* quotientTemp;
+	BigNum* remainderTemp;
+	
+	bigNumInit(&quotientTemp, quotient->used+1);
+	bigNumInit(&remainderTemp, remainder->used+1);
 
   if (bigNumAbsLarger(rhs, lhs)){
-    quotient->used = 0;
-    quotient->digit[0] = 0;
+    quotientTemp->used = 0;
+    quotientTemp->digit[0] = 0;
 
-    remainder->used = lhs->used;
+    remainderTemp->used = lhs->used;
     for (size_t i=0; i<= lhs->used;i++){
-      remainder->digit[i] = lhs->digit[i];
+      remainderTemp->digit[i] = lhs->digit[i];
     }
 
     return 0;
@@ -397,8 +411,8 @@ int bigNumDivide(BigNum* lhs, BigNum* rhs, BigNum* quotient, BigNum* remainder){
   else{
     bool lhsIsNotNeg = lhs->isNotNeg;
     bool rhsIsNotNeg = rhs->isNotNeg;
-    bool quotientIsNotNeg;
-    bool remainderIsNotNeg;
+    bool quotientTempIsNotNeg;
+    bool remainderTempIsNotNeg;
 
     BigNum* bigNumZero;
     bigNumInit(&bigNumZero,1);
@@ -410,38 +424,43 @@ int bigNumDivide(BigNum* lhs, BigNum* rhs, BigNum* quotient, BigNum* remainder){
       return DivZero;
     }else{
       bigNumFree(bigNumZero);
-      remainderIsNotNeg = lhs->isNotNeg;
+      remainderTempIsNotNeg = lhs->isNotNeg;
 
       if(lhs->isNotNeg == rhs->isNotNeg){
-        quotientIsNotNeg = true;
+        quotientTempIsNotNeg = true;
       }
       else{
-        quotientIsNotNeg = false;
+        quotientTempIsNotNeg = false;
       }
 
       // set the isNotNeg to true temporily
       lhs->isNotNeg = true;
       rhs->isNotNeg = true;
-      quotient->isNotNeg = true;
-      remainder->isNotNeg = true;
+      quotientTemp->isNotNeg = true;
+      remainderTemp->isNotNeg = true;
 
       if (rhs->used == 0){
-        bigNumDivideOneDigit(lhs,rhs,quotient,remainder);
+        bigNumDivideOneDigit(lhs,rhs,quotientTemp,remainderTemp);
       }else{
-        bigNumDivideOther(lhs,rhs,quotient,remainder);
+        bigNumDivideOther(lhs,rhs,quotientTemp,remainderTemp);
       }
 
 
         // recover to their isNotNeg
         lhs->isNotNeg = lhsIsNotNeg;
         rhs->isNotNeg = rhsIsNotNeg;
-        quotient->isNotNeg = quotientIsNotNeg;
-        remainder->isNotNeg = remainderIsNotNeg;
+        quotientTemp->isNotNeg = quotientTempIsNotNeg;
+        remainderTemp->isNotNeg = remainderTempIsNotNeg;
+		
+		// copy to the original variables
+		
+		bigNumCopy(quotientTemp, quotient);
+		bigNumCopy(remainderTemp, remainder);
+		
+		bigNumFree(quotientTemp);
+		bigNumFree(remainderTemp);
 
-
-        
         return 0;
-
     
     }
   }
