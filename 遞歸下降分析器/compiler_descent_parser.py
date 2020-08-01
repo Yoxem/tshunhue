@@ -60,7 +60,7 @@ class Parser:
         self.remained_token = None
     
     def parse(self, token_list):
-        if len(token_list) == (None, None):
+        if token_list[0] == (None, None):
             print("The compiled content is empty. Stop parsing.")
             return None
 

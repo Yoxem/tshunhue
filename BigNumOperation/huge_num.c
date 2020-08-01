@@ -1,8 +1,10 @@
-#include <stdio.h>
-#include <stdbool.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdint.h>
+/*
+huge_num.c - a simpified version of libtommath,
+which is a public domain library or arbitary-precision number
+arthimetic library.
+
+*/
+
 #include "huge_num.h"
 
 #define _2_32_ 4294967296
@@ -248,6 +250,7 @@ int bigNumSubtract(BigNum* lhs, BigNum* rhs, BigNum* result){
       bigNumAbsAdd(rhs,lhs,result);
     }
   }
+  // -3 - 5 or -5 - 3
   else if(lhs->isNotNeg == false & rhs->isNotNeg == true){
     result->isNotNeg = false;
     if (bigNumAbsLarger(lhs, rhs)){
@@ -266,7 +269,7 @@ int bigNumSubtract(BigNum* lhs, BigNum* rhs, BigNum* result){
     // 5 - 8
     else{
       result->isNotNeg = false;
-      bigNumAbsAdd(rhs, lhs, result);
+      bigNumAbsSubtract(rhs, lhs, result);
     }
   }
   else{
@@ -293,13 +296,13 @@ int bigNumMultiply(BigNum*lhs, BigNum* rhs, BigNum* result){
     result->isNotNeg = false;
   }
 
-  size_t n = lhs->used + rhs->used + 1;
-  uint32_t* temp_result = malloc(sizeof(uint32_t)*n);
-
+  size_t n = (lhs->used + 1) + (rhs->used + 1);
+  uint32_t* temp_result = calloc(sizeof(uint32_t), n); // actually length; n_used = n - 1
   
-  for (size_t i=0;i<=n;i++){
-    temp_result[i] = 0;
-  } 
+  for (size_t i=0;i<n;i++){
+    temp_result[i] = ((uint32_t)0);
+  }
+
 
   for(size_t i=0; i<=rhs->used; i++){
     uint64_t c = 0;
@@ -316,15 +319,18 @@ int bigNumMultiply(BigNum*lhs, BigNum* rhs, BigNum* result){
       c = res_carry;
     }
 
-    temp_result[i+(lhs->used)+1] = c;
+    temp_result[i+(lhs->used)+1] = (uint32_t)c;
   }
   
-  for(size_t i=0;i<=n;i++){
+  for(size_t i=0;i<n;i++){
 	  result->digit[i] = temp_result[i];
   }
 
   // correct the result->used
-  bigNumClearZero(result, n);
+  size_t n_used = n - 1;
+  bigNumClearZero(result, n_used);
+
+  free(temp_result);
   
   return 0;
 }
@@ -389,21 +395,14 @@ int bigNumShiftRight(BigNum* big_num, size_t n){
 }
 
 int bigNumDivide(BigNum* lhs, BigNum* rhs, BigNum* quotient, BigNum* remainder){
-	
-	// set temp variables
-	BigNum* quotientTemp;
-	BigNum* remainderTemp;
-	
-	bigNumInit(&quotientTemp, quotient->used+1);
-	bigNumInit(&remainderTemp, remainder->used+1);
 
   if (bigNumAbsLarger(rhs, lhs)){
-    quotientTemp->used = 0;
-    quotientTemp->digit[0] = 0;
+    quotient->used = 0;
+    quotient->digit[0] = 0;
 
-    remainderTemp->used = lhs->used;
+    remainder->used = lhs->used;
     for (size_t i=0; i<= lhs->used;i++){
-      remainderTemp->digit[i] = lhs->digit[i];
+      remainder->digit[i] = lhs->digit[i];
     }
 
     return 0;
@@ -411,8 +410,8 @@ int bigNumDivide(BigNum* lhs, BigNum* rhs, BigNum* quotient, BigNum* remainder){
   else{
     bool lhsIsNotNeg = lhs->isNotNeg;
     bool rhsIsNotNeg = rhs->isNotNeg;
-    bool quotientTempIsNotNeg;
-    bool remainderTempIsNotNeg;
+    bool quotientIsNotNeg;
+    bool remainderIsNotNeg;
 
     BigNum* bigNumZero;
     bigNumInit(&bigNumZero,1);
@@ -424,41 +423,33 @@ int bigNumDivide(BigNum* lhs, BigNum* rhs, BigNum* quotient, BigNum* remainder){
       return DivZero;
     }else{
       bigNumFree(bigNumZero);
-      remainderTempIsNotNeg = lhs->isNotNeg;
+      remainderIsNotNeg = lhs->isNotNeg;
 
       if(lhs->isNotNeg == rhs->isNotNeg){
-        quotientTempIsNotNeg = true;
+        quotientIsNotNeg = true;
       }
       else{
-        quotientTempIsNotNeg = false;
+        quotientIsNotNeg = false;
       }
 
       // set the isNotNeg to true temporily
       lhs->isNotNeg = true;
       rhs->isNotNeg = true;
-      quotientTemp->isNotNeg = true;
-      remainderTemp->isNotNeg = true;
+      quotient->isNotNeg = true;
+      remainder->isNotNeg = true;
 
       if (rhs->used == 0){
-        bigNumDivideOneDigit(lhs,rhs,quotientTemp,remainderTemp);
+        bigNumDivideOneDigit(lhs,rhs,quotient,remainder);
       }else{
-        bigNumDivideOther(lhs,rhs,quotientTemp,remainderTemp);
+        bigNumDivideOther(lhs,rhs,quotient,remainder);
       }
 
 
         // recover to their isNotNeg
         lhs->isNotNeg = lhsIsNotNeg;
         rhs->isNotNeg = rhsIsNotNeg;
-        quotientTemp->isNotNeg = quotientTempIsNotNeg;
-        remainderTemp->isNotNeg = remainderTempIsNotNeg;
-		
-		// copy to the original variables
-		
-		bigNumCopy(quotientTemp, quotient);
-		bigNumCopy(remainderTemp, remainder);
-		
-		bigNumFree(quotientTemp);
-		bigNumFree(remainderTemp);
+        quotient->isNotNeg = quotientIsNotNeg;
+        remainder->isNotNeg = remainderIsNotNeg;
 
         return 0;
     
@@ -547,7 +538,6 @@ int bigNumDivideOther(BigNum* lhs, BigNum* rhs, BigNum* quotient, BigNum* remain
       
       bigNumMultiply(temp_lhs, temp, temp2);
       bigNumCopy(temp2, temp_lhs);
-      bigNumFree(temp2);
 
       temp_rhs->isNotNeg = true;
       temp_rhs->used = 2;
@@ -640,7 +630,7 @@ int bigNumAdd(BigNum* lhs, BigNum* rhs, BigNum* result){
     // 5 + (-8)
     else{
       result->isNotNeg = false;
-      bigNumAbsAdd(rhs, lhs, result);
+      bigNumAbsSubtract(rhs, lhs, result);
     }
   }
   else{
@@ -876,90 +866,3 @@ char intToHexChar(int i){
   }
 }
 
-void main(){
-  BigNum* a;
-  BigNum* b;
-  bigNumInit(&a,88);
-  bigNumInit(&b,88);
-  strToBigNum(a, "-123456778122345566123345", 10);
-  strToBigNum(b, "-12345677812234556632254534", 10);
-  char* s = calloc(sizeof(char),100);
-  bigNumToStr(a,s,2);// -11010001001001001101011111000011000000011101010110000010000110011010101010001
-  printf("%s\n", s);
-  bigNumToStr(a,s,8); // -32111153703003526020632521
-  printf("%s\n", s);
-  bigNumToStr(a,s,10); // -123456778122345566123345
-  printf("%s\n", s);
-  bigNumToStr(a,s,16); // -1a249af8603ab0433551
-  printf("%s\n", s);
-  printf("%s\n", s);
-  strToBigNum(b, "-11010001001001001101011111000011000000011101010110000010000110011010101010001", 2);
-  bigNumToStr(b,s,10);
-  printf("%s\n", s); // -123456778122345566123345
-  strToBigNum(b, "-32111153703003526020632521", 8);
-  bigNumToStr(b,s,10); // -123456778122345566123345
-  printf("%s\n", s);
-  strToBigNum(b, "-123456778122345566123345", 10);
-  bigNumToStr(b,s,10); // -123456778122345566123345
-  printf("%s\n", s);
-  strToBigNum(b, "-1a249af8603ab0433551", 16);
-  
-  BigNum* x1;
-  BigNum* x2;
-  BigNum* x3;
-  BigNum* x4;
-  bigNumInit(&x1,5);
-  bigNumInit(&x2,5);
-  bigNumInit(&x3,10);
-  bigNumInit(&x4,10);
-  strToBigNum(x1, "-340282366920938463463374607431768211455", 10);
-  strToBigNum(x2, "-340282366920938463463374607431768211457", 10);
-  strToBigNum(x4, "7", 10);
-  bigNumMultiply(x1,x2,x3);
-  bigNumToStr(x3,s,10); // 115792089237316195423570985008687907853269984665640564039457584007913129639935
-  printf("%s\n", s);
-  bigNumToStr(x3,s,16); // ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
-  printf("%s\n", s);
-  bigNumAdd(x1,x2,x3);
-  bigNumToStr(x3,s,10); // -680564733841876926926749214863536422912
-  printf("%s\n", s);
-  bigNumSubtract(x1,x2,x3);
-  bigNumToStr(x3,s,10);
-  printf("%s\n", s); // 2
-
-  strToBigNum(x1, "340282366920938463463374607431768211461", 10);
-  bigNumAbsSubtract(x1, x4, x3);
-  bigNumToStr(x3,s,10);
-  printf("%s\n", s); // 340282366920938463463374607431768211454
-
-  BigNum *fac100;
-  BigNum *bigNumI;
-
-  // factorial 100 (i.e. 100!) = 93326215443944152681699238856266700490715968264381621468592963895217599993229915608941463976156518286253697920827223758251185210916864000000000000000000000000
-  bigNumInit(&fac100, 1000);
-  int32ToBigNum(fac100, 1);
-  bigNumInit(&bigNumI, 1);
-  char* stringfac100 = malloc(sizeof(char)* 1000);
-
-  for (int i=1;i<=100;i++){
-    int32ToBigNum(bigNumI,i);
-    BigNum *bigNumTemp;
-    bigNumInit(&bigNumTemp, 1000);
-    bigNumMultiply(fac100,bigNumI,bigNumTemp);
-    bigNumCopy(bigNumTemp, fac100);
-    bigNumFree(bigNumTemp);
-  }
-
-  bigNumToStr(fac100, stringfac100, 10);
-
-  printf(stringfac100);
-
-  strToBigNum(x1, "432342134213421948921303840923289032829489328", 10);
-  strToBigNum(x2, "12341234134913489343241234143231", 10);
-
-  bigNumDivide(x1,x2,x3,x4);
-  bigNumToStr(x3,s,10);
-  printf(s);
-
-
-}

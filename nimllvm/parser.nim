@@ -15,6 +15,7 @@ let pattern_list = @[r"(?<L_PAREN>\()",
                     r"(?<R_PAREN>\))", 
                     r"(?<INT>[-]?\d+)", 
                     r"(?<DOU>[-]?\d+\.\d+)",
+                    r"(?<ID>[_a-zA-Z][_a-zA-Z0-9]*)",
                     r"(?<STR>""([^""]|\\"")*"")"]
 
 
@@ -50,7 +51,7 @@ proc advance(p :var Parser) : bool =
 proc atom(p :var Parser): ASTNode[string] =
     echo "ATOM"
     echo p.token
-    let atom_token_array = ["INT", "DOU", "STR"] 
+    let atom_token_array = ["INT", "DOU", "STR", "ID"] 
     if atom_token_array.contains(p.token[1]):
         let result = ASTNode[string](obj : p.token[0] , children : @[])
         discard p.advance()
@@ -102,8 +103,6 @@ proc parse(p :var Parser, token_seq: var seq[array[2,string]]) : ASTNode[string]
         p.remained_tokens.delete(0)
 
         result = p.main()
-
-        echo result.to_string()
         
         return result
         
@@ -113,7 +112,9 @@ var parser : Parser
 
 parser = Parser(token : ["", ""], remained_tokens : @[["123","123"]])
 
-var tokenized_list = tokenize("(1 2 3 4( 5 6( 7) 8)  9)",pattern_list)
+#var tokenized_list = tokenize("(1 2 3 4( 5 6( 7) 8)  9)",pattern_list)
+
+var tokenized_list = tokenize("(def int x 15)",pattern_list)
 
 let ast_result = parser.parse(tokenized_list)
 

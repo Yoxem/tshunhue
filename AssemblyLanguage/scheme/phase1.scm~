@@ -1,0 +1,6 @@
+(define 64-register-ls '(rax rcx rdx rbx rsp rbp rsi rdi))
+(define 32-register-ls '(eax ecx ecx edx ebx ebp esi edi))
+(define move-cmd-ls '(mov))
+(define noary-cmd-ls '(cltd ret))
+(define arthimetic-cmd-ls '(add sub mul imul div idiv))
+

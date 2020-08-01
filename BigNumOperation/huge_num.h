@@ -1,6 +1,12 @@
 #ifndef HUGE_NUM
 #define HUGE_NUM
 
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
 typedef struct BigNum BigNum;
 
 int bigNumAbsAdd(BigNum* bigger, BigNum* smaller, BigNum* result);
@@ -24,6 +30,7 @@ int bigNumShiftRight(BigNum* big_num, size_t n);
 int bigNumSubtract(BigNum* lhs, BigNum* rhs, BigNum* result);
 int bigNumToStr(BigNum* num, char* str, uint32_t base);
 int int32ToBigNum(BigNum* bigNum, int32_t i32Num);
+int strToBigNum(BigNum* num, char* str, uint32_t base);
 void strToBigNumAux(BigNum* num, int32_t digit, uint32_t base);
 bool isOverBorder(int32_t digit, uint32_t base);
 bool is16base(char c);

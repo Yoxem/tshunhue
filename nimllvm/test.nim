@@ -1,20 +1,26 @@
 type
-  ASTNode*[T] = ref object
-    obj*: T
-    children*: seq[ASTNode[T]]
-
+    Tree*[T] = ref object of RootObj
+        obj*: T
+        children*: seq[ASTNode[T]]
+    ASTNode*[T] = ref object of Tree[T]
+        obj_type*: Tree[T]
 
 proc add_child*(parent :var ASTNode[string], child : ASTNode[string]): bool = 
     add parent.children, child
 
 proc set_children_array(parent : ASTNode[string], children_array : seq[ASTNode[string]]): bool =
     for i in 0..<len(children_array):
-        parent.children.add(children_array[i])
+        parent.children.add(children_array[i])    
 
 
-proc to_string*(a: ASTNode[string]): string =
+proc to_string*(a: Tree[string]): string =
     var result = ""
-    result &= $a.obj
+
+    if a is ASTNode[string]:
+        let ast_node : ASTNode[string] = cast[ASTNode[string]](a)
+        result &= ($a.obj & ":" & to_string(ast_node.obj_type))
+    else:
+        result &= $a.obj
 
     if len(a.children) > 0:
         result &= "("
