@@ -1,8 +1,7 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="zh-tw" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="zh-tw" > <!--<![endif]-->
+<html class="writer-html5" lang="zh-tw" >
 <head>
   <meta charset="utf-8">
   
@@ -12,30 +11,32 @@
   
 
   
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
   
   
   
 
   
-  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="型別" href="型別.html" />
+    <link rel="next" title="型別" href="%E5%9E%8B%E5%88%A5.html" />
     <link rel="prev" title="Welcome to Tshunhue Documents’s documentation!" href="index.html" /> 
 </head>
 
@@ -50,7 +51,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> Tshunhue Documents
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> Tshunhue Documents
           
 
           
@@ -73,6 +74,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -84,20 +86,24 @@
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">基本函數介紹</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#id2">四則運算</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id3">定義變數 (=)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id4">非函數</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id5">函數（閉包）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">布爾值</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">流程控制</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">影印字元</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id6">定義變數 (=)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id7">非函數</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">函數（閉包）</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#id6">匿名函數</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#lambda-function">匿名函數 (lambda function)</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="型別.html">型別</a></li>
+<li class="toctree-l1"><a class="reference internal" href="%E5%9E%8B%E5%88%A5.html">型別</a></li>
 </ul>
 
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -136,7 +142,7 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="index.html">Docs</a> &raquo;</li>
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
       <li>基本函數介紹</li>
     
@@ -161,442 +167,176 @@
 <h1>基本函數介紹<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="id2">
 <h2>四則運算<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
+<dl class="py function">
 <dt>
-<code class="sig-name descname">+ : lhs + rhs</code></dt>
+<code class="sig-name descname">+ : (-&gt; int int int)</code></dt>
 <dd></dd></dl>
 
-<p>將 lhs（左值）與 rhs（右值）相加，得到回傳值。型別轉換 table：</p>
-<table class="docutils align-default">
-<colgroup>
-<col style="width: 25%" />
-<col style="width: 25%" />
-<col style="width: 50%" />
-</colgroup>
-<thead>
-<tr class="row-odd"><th class="head"><p>lhs</p></th>
-<th class="head"><p>rhs</p></th>
-<th class="head"><p>return val</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>p_int</p></td>
-<td><p>p_int</p></td>
-<td><p>p_int</p></td>
-</tr>
-<tr class="row-odd"><td><p>p_int</p></td>
-<td><p>n_int</p></td>
-<td><p>int</p></td>
-</tr>
-<tr class="row-even"><td><p>p_int</p></td>
-<td><p>z_int</p></td>
-<td><p>p_int</p></td>
-</tr>
-<tr class="row-odd"><td><p>p_int</p></td>
-<td><p>int</p></td>
-<td><p>int</p></td>
-</tr>
-<tr class="row-even"><td><p>n_int</p></td>
-<td><p>n_int</p></td>
-<td><p>n_int</p></td>
-</tr>
-<tr class="row-odd"><td><p>n_int</p></td>
-<td><p>p_int</p></td>
-<td><p>int</p></td>
-</tr>
-<tr class="row-even"><td><p>n_int</p></td>
-<td><p>z_int</p></td>
-<td><p>n_int</p></td>
-</tr>
-<tr class="row-odd"><td><p>n_int</p></td>
-<td><p>int</p></td>
-<td><p>int</p></td>
-</tr>
-<tr class="row-even"><td><p>z_int</p></td>
-<td><p>p_int</p></td>
-<td><p>p_int</p></td>
-</tr>
-<tr class="row-odd"><td><p>z_int</p></td>
-<td><p>n_int</p></td>
-<td><p>n_int</p></td>
-</tr>
-<tr class="row-even"><td><p>z_int</p></td>
-<td><p>z_int</p></td>
-<td><p>z_int</p></td>
-</tr>
-<tr class="row-odd"><td><p>z_int</p></td>
-<td><p>int</p></td>
-<td><p>int</p></td>
-</tr>
-<tr class="row-even"><td><p>int</p></td>
-<td><p>n_int</p></td>
-<td><p>int</p></td>
-</tr>
-<tr class="row-odd"><td><p>int</p></td>
-<td><p>p_int</p></td>
-<td><p>int</p></td>
-</tr>
-<tr class="row-even"><td><p>int</p></td>
-<td><p>z_int</p></td>
-<td><p>int</p></td>
-</tr>
-<tr class="row-odd"><td><p>int</p></td>
-<td><p>int</p></td>
-<td><p>int</p></td>
-</tr>
-<tr class="row-even"><td><p>dou</p></td>
-<td><p>dou</p></td>
-<td><p>dou</p></td>
-</tr>
-</tbody>
-</table>
-<dl class="function">
+<p>整數相加。</p>
+<dl class="py function">
 <dt>
-<code class="sig-name descname">- : lhs - rhs</code></dt>
+<code class="sig-name descname">- : (-&gt; int int int)</code></dt>
 <dd></dd></dl>
 
-<p>將 lhs（左值）與 rhs（右值）相減，得到回傳值。型別轉換 table：</p>
-<table class="docutils align-default">
-<colgroup>
-<col style="width: 25%" />
-<col style="width: 25%" />
-<col style="width: 50%" />
-</colgroup>
-<thead>
-<tr class="row-odd"><th class="head"><p>lhs</p></th>
-<th class="head"><p>rhs</p></th>
-<th class="head"><p>return val</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>p_int</p></td>
-<td><p>p_int</p></td>
-<td><p>int</p></td>
-</tr>
-<tr class="row-odd"><td><p>p_int</p></td>
-<td><p>n_int</p></td>
-<td><p>p_int</p></td>
-</tr>
-<tr class="row-even"><td><p>p_int</p></td>
-<td><p>z_int</p></td>
-<td><p>p_int</p></td>
-</tr>
-<tr class="row-odd"><td><p>p_int</p></td>
-<td><p>int</p></td>
-<td><p>int</p></td>
-</tr>
-<tr class="row-even"><td><p>n_int</p></td>
-<td><p>n_int</p></td>
-<td><p>int</p></td>
-</tr>
-<tr class="row-odd"><td><p>n_int</p></td>
-<td><p>p_int</p></td>
-<td><p>n_int</p></td>
-</tr>
-<tr class="row-even"><td><p>n_int</p></td>
-<td><p>z_int</p></td>
-<td><p>n_int</p></td>
-</tr>
-<tr class="row-odd"><td><p>n_int</p></td>
-<td><p>int</p></td>
-<td><p>int</p></td>
-</tr>
-<tr class="row-even"><td><p>z_int</p></td>
-<td><p>p_int</p></td>
-<td><p>n_int</p></td>
-</tr>
-<tr class="row-odd"><td><p>z_int</p></td>
-<td><p>n_int</p></td>
-<td><p>p_int</p></td>
-</tr>
-<tr class="row-even"><td><p>z_int</p></td>
-<td><p>z_int</p></td>
-<td><p>z_int</p></td>
-</tr>
-<tr class="row-odd"><td><p>z_int</p></td>
-<td><p>int</p></td>
-<td><p>int</p></td>
-</tr>
-<tr class="row-even"><td><p>int</p></td>
-<td><p>n_int</p></td>
-<td><p>int</p></td>
-</tr>
-<tr class="row-odd"><td><p>int</p></td>
-<td><p>p_int</p></td>
-<td><p>int</p></td>
-</tr>
-<tr class="row-even"><td><p>int</p></td>
-<td><p>z_int</p></td>
-<td><p>int</p></td>
-</tr>
-<tr class="row-odd"><td><p>int</p></td>
-<td><p>int</p></td>
-<td><p>int</p></td>
-</tr>
-<tr class="row-even"><td><p>dou</p></td>
-<td><p>dou</p></td>
-<td><p>dou</p></td>
-</tr>
-</tbody>
-</table>
-<dl class="function">
+<p>整數相減。</p>
+<dl class="py function">
 <dt>
-<code class="sig-name descname">- : lhs * rhs</code></dt>
+<code class="sig-name descname">* : (-&gt; int int int)</code></dt>
 <dd></dd></dl>
 
-<p>將 lhs（左值）與 rhs（右值）相乘，得到回傳值。型別轉換 table：</p>
-<table class="docutils align-default">
-<colgroup>
-<col style="width: 25%" />
-<col style="width: 25%" />
-<col style="width: 50%" />
-</colgroup>
-<thead>
-<tr class="row-odd"><th class="head"><p>lhs</p></th>
-<th class="head"><p>rhs</p></th>
-<th class="head"><p>return val</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>p_int</p></td>
-<td><p>p_int</p></td>
-<td><p>p_int</p></td>
-</tr>
-<tr class="row-odd"><td><p>p_int</p></td>
-<td><p>n_int</p></td>
-<td><p>n_int</p></td>
-</tr>
-<tr class="row-even"><td><p>p_int</p></td>
-<td><p>z_int</p></td>
-<td><p>z_int</p></td>
-</tr>
-<tr class="row-odd"><td><p>p_int</p></td>
-<td><p>int</p></td>
-<td><p>int</p></td>
-</tr>
-<tr class="row-even"><td><p>n_int</p></td>
-<td><p>n_int</p></td>
-<td><p>p_int</p></td>
-</tr>
-<tr class="row-odd"><td><p>n_int</p></td>
-<td><p>p_int</p></td>
-<td><p>n_int</p></td>
-</tr>
-<tr class="row-even"><td><p>n_int</p></td>
-<td><p>z_int</p></td>
-<td><p>z_int</p></td>
-</tr>
-<tr class="row-odd"><td><p>n_int</p></td>
-<td><p>int</p></td>
-<td><p>int</p></td>
-</tr>
-<tr class="row-even"><td><p>z_int</p></td>
-<td><p>p_int</p></td>
-<td><p>z_int</p></td>
-</tr>
-<tr class="row-odd"><td><p>z_int</p></td>
-<td><p>n_int</p></td>
-<td><p>z_int</p></td>
-</tr>
-<tr class="row-even"><td><p>z_int</p></td>
-<td><p>z_int</p></td>
-<td><p>z_int</p></td>
-</tr>
-<tr class="row-odd"><td><p>z_int</p></td>
-<td><p>int</p></td>
-<td><p>z_int</p></td>
-</tr>
-<tr class="row-even"><td><p>int</p></td>
-<td><p>n_int</p></td>
-<td><p>int</p></td>
-</tr>
-<tr class="row-odd"><td><p>int</p></td>
-<td><p>p_int</p></td>
-<td><p>int</p></td>
-</tr>
-<tr class="row-even"><td><p>int</p></td>
-<td><p>z_int</p></td>
-<td><p>z_int</p></td>
-</tr>
-<tr class="row-odd"><td><p>int</p></td>
-<td><p>int</p></td>
-<td><p>int</p></td>
-</tr>
-<tr class="row-even"><td><p>dou</p></td>
-<td><p>dou</p></td>
-<td><p>dou</p></td>
-</tr>
-</tbody>
-</table>
-<dl class="function">
+<p>整數相乘。</p>
+<dl class="py function">
 <dt>
-<code class="sig-name descname">/ : lhs * rhs</code></dt>
+<code class="sig-name descname">/ : (-&gt; int int int)</code></dt>
 <dd></dd></dl>
 
-<p>將 lhs（左值）與 rhs（右值）相乘，得到回傳值。型別轉換 table：</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>rhs 只能為 p_int、n_int，或 dou，<strong>不可為 z_int 或 int</strong>。</p>
+<p>整數相除，得商數。除以 0 的時候跳出特例，中止程式。如果用 C 語言表示的話：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">static</span> <span class="n">jmp_buf</span> <span class="n">buf</span><span class="p">;</span>
+<span class="o">...</span>
+<span class="n">void</span> <span class="n">int_div_closure_thunk</span><span class="p">(</span><span class="n">Object</span><span class="o">*</span> <span class="n">closure</span><span class="p">,</span> <span class="n">Object</span><span class="o">*</span> <span class="n">lhs</span><span class="p">,</span> <span class="n">Object</span><span class="o">*</span> <span class="n">rhs</span><span class="p">,</span> <span class="n">Object</span><span class="o">*</span> <span class="n">result</span><span class="p">){</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">lhs</span><span class="o">-&gt;</span><span class="n">value</span><span class="o">==</span><span class="mi">0</span><span class="p">){</span>
+      <span class="n">printf</span><span class="p">(</span><span class="s2">&quot;Exception: Div 0 Error.&quot;</span><span class="p">);</span>
+      <span class="n">longjmp</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+  <span class="p">}</span>
+
+<span class="p">}</span>
+<span class="o">...</span>
+<span class="nb">int</span> <span class="n">main</span><span class="p">(</span><span class="n">void</span><span class="p">){</span>
+  <span class="nb">int</span> <span class="n">jmpVal</span> <span class="o">=</span> <span class="n">setjmp</span><span class="p">(</span><span class="n">buf</span><span class="p">);</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">jmpVal</span> <span class="o">==</span> <span class="mi">0</span><span class="p">){</span>
+  <span class="o">//</span> <span class="n">main_body</span>
+  <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+  <span class="o">//</span> <span class="n">exit</span> <span class="n">the</span> <span class="n">program</span> <span class="k">with</span> <span class="n">the</span> <span class="n">exception</span>
+  <span class="n">printf</span><span class="p">(</span><span class="s2">&quot;Exit the program with the exception&quot;</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
 </div>
-<table class="docutils align-default">
-<colgroup>
-<col style="width: 25%" />
-<col style="width: 25%" />
-<col style="width: 50%" />
-</colgroup>
-<thead>
-<tr class="row-odd"><th class="head"><p>lhs</p></th>
-<th class="head"><p>rhs</p></th>
-<th class="head"><p>return val</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>p_int</p></td>
-<td><p>p_int</p></td>
-<td><p>p_int</p></td>
-</tr>
-<tr class="row-odd"><td><p>p_int</p></td>
-<td><p>n_int</p></td>
-<td><p>n_int</p></td>
-</tr>
-<tr class="row-even"><td><p>n_int</p></td>
-<td><p>n_int</p></td>
-<td><p>p_int</p></td>
-</tr>
-<tr class="row-odd"><td><p>n_int</p></td>
-<td><p>p_int</p></td>
-<td><p>n_int</p></td>
-</tr>
-<tr class="row-even"><td><p>z_int</p></td>
-<td><p>p_int</p></td>
-<td><p>z_int</p></td>
-</tr>
-<tr class="row-odd"><td><p>z_int</p></td>
-<td><p>n_int</p></td>
-<td><p>z_int</p></td>
-</tr>
-<tr class="row-even"><td><p>int</p></td>
-<td><p>n_int</p></td>
-<td><p>int</p></td>
-</tr>
-<tr class="row-odd"><td><p>int</p></td>
-<td><p>p_int</p></td>
-<td><p>int</p></td>
-</tr>
-<tr class="row-even"><td><p>dou</p></td>
-<td><p>dou</p></td>
-<td><p>dou</p></td>
-</tr>
-</tbody>
-</table>
+<dl class="py function">
+<dt>
+<code class="sig-name descname">+. : (-&gt; dou dou dou)</code></dt>
+<dd></dd></dl>
+
+<p>浮點數相加。</p>
+<dl class="py function">
+<dt>
+<code class="sig-name descname">-. : (-&gt; dou dou dou)</code></dt>
+<dd></dd></dl>
+
+<p>浮點數相減。</p>
+<dl class="py function">
+<dt>
+<code class="sig-name descname">*. : (-&gt; dou dou dou)</code></dt>
+<dd></dd></dl>
+
+<p>浮點數相乘。</p>
+<dl class="py function">
+<dt>
+<code class="sig-name descname">/. : (-&gt; dou dou dou)</code></dt>
+<dd></dd></dl>
+
+<p>浮點數相除。</p>
 </div>
 <div class="section" id="id3">
-<h2>定義變數 (=)<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<h2>布爾值<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt>
+<code class="sig-name descname">and : (-&gt; bool bool bool)</code></dt>
+<dd></dd></dl>
+
+<p>AND。</p>
+<dl class="py function">
+<dt>
+<code class="sig-name descname">or : (-&gt; bool bool bool)</code></dt>
+<dd></dd></dl>
+
+<p>OR。</p>
+<dl class="py function">
+<dt>
+<code class="sig-name descname">not : (-&gt; bool bool)</code></dt>
+<dd></dd></dl>
+
+<p>NOT。</p>
+</div>
 <div class="section" id="id4">
-<h3>非函數<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<h2>流程控制<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt>
+<code class="sig-name descname">(if cond then alt)</code></dt>
+<dd></dd></dl>
+
+<p>若 cond 為真則返回 then，否則返回 alt。</p>
+</div>
+<div class="section" id="id5">
+<h2>影印字元<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt>
+<code class="sig-name descname">print-str : (-&gt; str void)</code></dt>
+<dd></dd></dl>
+
+<p>列印字串。<code class="docutils literal notranslate"><span class="pre">void</span></code> 表示不返回任何東西。</p>
+<dl class="py function">
+<dt>
+<code class="sig-name descname">int-to-str : (-&gt; int str)</code></dt>
+<dd></dd></dl>
+
+<p>整數轉成十進位字串（10 為 base）。</p>
+<dl class="py function">
+<dt>
+<code class="sig-name descname">dou-to-str : (-&gt; int str)</code></dt>
+<dd></dd></dl>
+
+<p>浮點數轉成十進位字串（10 為 base）。</p>
+</div>
+<div class="section" id="id6">
+<h2>定義變數 (=)<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id7">
+<h3>非函數<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
 <p>語法如下：</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Type</span> <span class="n">var_name</span> <span class="o">=</span> <span class="n">value</span><span class="p">;</span> <span class="c1">#非函數</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="k">def</span> <span class="nf">Type</span> <span class="n">var</span> <span class="n">expression</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>例如：</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">p_int</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">9</span><span class="p">;</span> <span class="c1"># 定義正整數</span>
-
-<span class="n">dou</span> <span class="n">pi</span> <span class="o">=</span> <span class="mf">3.1416</span><span class="p">;</span> <span class="c1"># 定義浮點數值</span>
-
-<span class="n">dou</span> <span class="n">z</span> <span class="o">=</span> <span class="n">pi</span><span class="p">;</span> <span class="c1"># 設定值</span>
-
-<span class="nb">int</span> <span class="n">x</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">(</span><span class="nb">int</span> <span class="n">x</span><span class="p">){</span><span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;}(</span><span class="mi">8</span><span class="p">);</span> <span class="c1"># 8 + 1 = 9</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="k">def</span> <span class="nf">int</span> <span class="n">a</span> <span class="mi">10</span><span class="p">)</span>
+<span class="p">(</span><span class="k">def</span> <span class="nf">dou</span> <span class="n">b</span> <span class="p">(</span><span class="o">+</span> <span class="mf">3.1</span> <span class="mf">7.0</span><span class="p">))</span>
 </pre></div>
 </div>
 <p>..note</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>因為 tshunhue 裡面，所有變數都是不可變物件， ``=`` 不可以拿來重新設定值。定義閉包也一樣。
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>因為 tshunhue 裡面，所有變數都是不可變物件， ``define`` 不可以拿來重新設定值。定義閉包也一樣。
 </pre></div>
 </div>
 </div>
-<div class="section" id="id5">
-<h3>函數（閉包）<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id8">
+<h3>函數（閉包）<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
 <p id="defining-lambda">閉包的定義比較複雜。但大致如下：</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">type_of_function</span>
-<span class="n">fn_var</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">(</span><span class="n">x1</span> <span class="p">[,</span><span class="o">...</span><span class="p">]){</span><span class="o">*</span><span class="n">body</span><span class="o">*</span><span class="p">};</span>
-</pre></div>
-</div>
-<p>通常 type_of_function（函數型別）與 fn_var（函數名）要換行。不換行空白也行，如`(-&gt; int int) id_int = lambda(x){return x;};`。</p>
-<p>基本函數定義：</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="sd">&#39;&#39;&#39;單引數函數&#39;&#39;&#39;</span>
-<span class="p">(</span><span class="o">-&gt;</span> <span class="nb">int</span> <span class="nb">int</span><span class="p">)</span>
-<span class="n">id_int</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">(</span><span class="n">x</span><span class="p">){</span><span class="k">return</span> <span class="n">x</span><span class="p">;};</span>
-
-<span class="sd">&#39;&#39;&#39;雙引數函數&#39;&#39;&#39;</span>
-<span class="p">(</span><span class="o">-&gt;</span> <span class="p">(</span><span class="nb">int</span> <span class="nb">int</span><span class="p">)</span> <span class="nb">int</span><span class="p">)</span> <span class="c1"># 兩個以上引數要加括號 ()</span>
-<span class="n">custom_add</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">){</span><span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">;};</span>
-</pre></div>
-</div>
-<p>多載函數如下定義：</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">overload</span> <span class="n">fn_var</span> <span class="o">=</span> <span class="p">[</span>
- <span class="n">type_of_fn1</span> <span class="k">lambda</span><span class="p">(</span><span class="n">arg1</span><span class="p">,</span> <span class="o">*...*</span><span class="p">){</span><span class="n">body1</span><span class="p">},</span>
- <span class="n">type_of_fn2</span> <span class="k">lambda</span><span class="p">(</span><span class="n">arg2</span><span class="p">,</span> <span class="o">*...*</span><span class="p">){</span><span class="n">body2</span><span class="p">}</span><span class="o">*</span><span class="p">,</span> <span class="o">...*</span><span class="p">];</span>
-</pre></div>
-</div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="sd">&#39;&#39;&#39;type of the function:</span>
-<span class="sd">(caseof</span>
-<span class="sd">    (-&gt; int int)</span>
-<span class="sd">    (-&gt; dou dou)</span>
-<span class="sd">)</span>
-<span class="sd">&#39;&#39;&#39;</span>
-<span class="n">overload</span> <span class="n">custom_overload_id</span> <span class="o">=</span> <span class="p">[(</span><span class="o">-&gt;</span> <span class="nb">int</span> <span class="nb">int</span><span class="p">)</span>
-                          <span class="k">lambda</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-                          <span class="p">{</span><span class="k">return</span> <span class="n">x</span><span class="p">;},</span>
-                          <span class="p">(</span><span class="o">-&gt;</span> <span class="n">dou</span> <span class="n">dou</span><span class="p">)</span>
-                          <span class="k">lambda</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-                          <span class="p">{</span><span class="k">return</span> <span class="n">x</span><span class="p">;}];</span>
-</pre></div>
-</div>
-<p>參數化多型函數如下定義：</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">para_fun</span> <span class="p">((</span><span class="n">a</span> <span class="p">[,</span> <span class="o">...</span><span class="p">])</span> <span class="ow">in</span> <span class="nb">type</span><span class="p">)</span> <span class="n">type_of_fun</span><span class="p">)</span>
-
-<span class="n">fn</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">(</span><span class="n">arg</span> <span class="p">[,</span><span class="o">...</span><span class="p">]){</span><span class="n">body</span><span class="p">};</span>
-
-<span class="c1"># 或是</span>
-
-<span class="p">(</span><span class="n">para_fun</span> <span class="p">((</span><span class="n">a</span> <span class="p">[,</span> <span class="o">...</span><span class="p">])</span> <span class="ow">in</span> <span class="nb">any</span><span class="p">)</span> <span class="n">type_of_fun</span><span class="p">)</span>
-
-<span class="n">fn</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">(</span><span class="n">arg</span> <span class="p">[,</span><span class="o">...</span><span class="p">]){</span><span class="n">body</span><span class="p">};</span> <span class="c1"># any: 任意非閉包型別</span>
-</pre></div>
-</div>
-<p>例如</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">para_fun</span> <span class="p">((</span><span class="n">a</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">any</span><span class="p">)</span> <span class="p">(</span><span class="o">-&gt;</span> <span class="n">a</span> <span class="n">a</span><span class="p">))</span>
-<span class="n">para_poly_id</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">(</span><span class="n">x</span><span class="p">){</span><span class="k">return</span> <span class="n">x</span><span class="p">};</span>
-</pre></div>
-</div>
-<p>參數化多態不支援將閉包型別參數化。如果需要參數化，需要用 struct 包起來。</p>
-</div>
-</div>
-<div class="section" id="id6">
-<h2>匿名函數<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
-<dt>
-<code class="sig-name descname">lambda(Type x1){ block }</code></dt>
-<dt>
-<code class="sig-name descname">lambda(Type1 x1, Type2 x2, ...){ block }</code></dt>
-<dd></dd></dl>
-
-<p>匿名函數 lambda，輸入時需強制標示型別（除非用於定義非多載函數的時候）。輸出如 block。除非不返回回傳值，否則一律要加 return 標示回傳值。</p>
-<p>有關於函數定義，請參考 <a class="reference internal" href="#defining-lambda"><span class="std std-ref">定義函數</span></a>。</p>
-<p>事例如下：</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">block</span> <span class="o">=</span> <span class="n">expressions</span><span class="o">+</span><span class="p">;</span> <span class="k">return</span> <span class="n">expression</span><span class="p">;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="k">def</span> <span class="nf">Type</span> <span class="n">var</span> <span class="k">lambda</span><span class="o">-</span><span class="n">function</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>例如：</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">lambda</span><span class="p">(</span><span class="nb">int</span> <span class="n">x</span><span class="p">){</span>
-  <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">4</span><span class="p">;</span>
-<span class="p">};</span>
-
-<span class="c1"># 不傳回值</span>
-<span class="k">lambda</span><span class="p">(</span><span class="nb">int</span> <span class="n">x</span><span class="p">){</span>
-  <span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">);</span>
-<span class="p">};</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(def (-&gt; int int) int-add1 (\ ((int x)) (+ x 1)))
+(def (-&gt; dou dou dou) sqrt-sum (\ ((dou x)(dou y)) (+. (*. x x) (*. y y))))
 </pre></div>
 </div>
+</div>
+</div>
+<div class="section" id="lambda-function">
+<h2>匿名函數 (lambda function)<a class="headerlink" href="#lambda-function" title="Permalink to this headline">¶</a></h2>
+<p>定義：</p>
+<dl class="py function">
+<dt>
+<code class="sig-name descname">(\ () body+)</code></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt>
+<code class="sig-name descname">(\ ((Type var)) body+)</code></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt>
+<code class="sig-name descname">(\ ((Type1 var1)(Type2 var2)[...]*) body+)</code></dt>
+<dd></dd></dl>
+
 <p>所有函數都是第一類物件與閉包，用 lexical scope 保存前文變數。</p>
 </div>
 </div>
@@ -609,7 +349,7 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="型別.html" class="btn btn-neutral float-right" title="型別" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="%E5%9E%8B%E5%88%A5.html" class="btn btn-neutral float-right" title="型別" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="index.html" class="btn btn-neutral float-left" title="Welcome to Tshunhue Documents’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
@@ -621,11 +361,19 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2019, Yoxem Chen
+        
+        &copy; Copyright 2020, Yoxem Chen
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -636,7 +384,6 @@
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

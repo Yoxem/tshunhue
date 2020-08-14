@@ -19,7 +19,7 @@ import sphinx_rtd_theme # for readthedocs
 # -- Project information -----------------------------------------------------
 
 project = 'Tshunhue Documents'
-copyright = '2019, Yoxem Chen'
+copyright = '2020, Yoxem Chen'
 author = 'Yoxem Chen'
 
 

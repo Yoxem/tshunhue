@@ -1,8 +1,7 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="zh-tw" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="zh-tw" > <!--<![endif]-->
+<html class="writer-html5" lang="zh-tw" >
 <head>
   <meta charset="utf-8">
   
@@ -12,30 +11,32 @@
   
 
   
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
   
   
   
 
   
-  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="基本函數介紹" href="基本函數介紹.html" /> 
+    <link rel="prev" title="基本函數介紹" href="%E5%9F%BA%E6%9C%AC%E5%87%BD%E6%95%B8%E4%BB%8B%E7%B4%B9.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -49,7 +50,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> Tshunhue Documents
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> Tshunhue Documents
           
 
           
@@ -72,6 +73,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -81,7 +83,7 @@
             
               <p class="caption"><span class="caption-text">Contents</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="基本函數介紹.html">基本函數介紹</a></li>
+<li class="toctree-l1"><a class="reference internal" href="%E5%9F%BA%E6%9C%AC%E5%87%BD%E6%95%B8%E4%BB%8B%E7%B4%B9.html">基本函數介紹</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">型別</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#id2">簡單型別</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#id3">數字</a></li>
@@ -90,11 +92,9 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#id6">複雜型別</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id7">結構</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id8">聯集</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id7">自訂型別</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#id9">函數型別</a></li>
 </ul>
 </li>
 </ul>
@@ -102,6 +102,7 @@
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -140,7 +141,7 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="index.html">Docs</a> &raquo;</li>
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
       <li>型別</li>
     
@@ -168,13 +169,7 @@
 <div class="section" id="id3">
 <h3>數字<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
-<li><p><cite>int</cite>：整數，初期可用 64 位元帶符號整數處理，之後可用任意精度整數處理。</p>
-<ul>
-<li><p><cite>p_int</cite>：正整數</p></li>
-<li><p><cite>n_int</cite>：負整數</p></li>
-<li><p><cite>z_int</cite>：零整數</p></li>
-</ul>
-</li>
+<li><p><cite>int</cite>：整數，初期可用 64 位元帶符號整數處理。</p></li>
 <li><p><cite>dou</cite>：雙精度浮點數</p></li>
 </ul>
 </div>
@@ -183,88 +178,63 @@
 <ul class="simple">
 <li><p><cite>str</cite>：字串</p></li>
 </ul>
-<p>..note :: 無 char 型別</p>
+<p>暫不支援 <cite>char</cite>。</p>
 </div>
 <div class="section" id="id5">
 <h3>布林<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
-<li><p><cite>bool</cite>：布林值。true：真值，false：假值。</p></li>
+<li><p><cite>bool</cite>：布林值。#t：真值，#f：假值。</p></li>
 </ul>
 </div>
 </div>
 <div class="section" id="id6">
 <h2>複雜型別<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
-<p>可以 <cite>typedef</cite> 自定義 struct（結構）與 union 型別。</p>
 <div class="section" id="id7">
-<h3>結構<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
-<p>類似 Scheme 的紀錄 (record)。可儲存閉包型別。</p>
-<p>不支援型別模板 <cite>struct&lt;a&gt;{…}</cite> 這種的。</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">typedef</span> <span class="n">human</span> <span class="o">=</span> <span class="n">struct</span><span class="p">{</span><span class="nb">str</span> <span class="n">name</span><span class="p">,</span> <span class="nb">int</span> <span class="n">age</span><span class="p">};</span>
+<h3>自訂型別<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
+<p>可以自訂 product type 或 sum type。為求簡化，不支援型別當參數。</p>
+<dl class="py function">
+<dt>
+<code class="sig-name descname">(Type TYPE-NAME (Type-constronctor x1 x2 ...))</code></dt>
+<dd></dd></dl>
 
-<span class="n">human</span> <span class="n">jack</span> <span class="o">=</span> <span class="n">human</span><span class="p">{</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Jack&quot;</span><span class="p">,</span> <span class="n">age</span><span class="o">=</span><span class="mi">32</span><span class="p">};</span>
+<dl class="py function">
+<dt>
+<code class="sig-name descname">(Type TYPE-NAME (U (Type-const1 x1 x2 ...)(Type-const2 x1 x2 ...)...))</code></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt>
+<code class="sig-name descname">(Type TYPE-NAME (Type-constronctor))</code></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt>
+<code class="sig-name descname">(Type TYPE-NAME (U (Type-const1)(Type-const2)...))</code></dt>
+<dd></dd></dl>
+
+<p>U 是 union 的意思，指 Sum Type。</p>
+<p>例如：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">Type</span> <span class="n">IntPair</span> <span class="p">(</span><span class="n">IntPair</span> <span class="n">Int</span> <span class="n">Int</span><span class="p">))</span>
 </pre></div>
 </div>
-<p>可定義空 struct：</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">typedef</span> <span class="n">nil</span> <span class="o">=</span> <span class="n">struct</span> <span class="p">{};</span> <span class="c1"># 空型別</span>
+<p>如果可以模式匹配，就變這樣：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span>\ <span class="p">((</span><span class="n">IntPair</span> <span class="n">x</span><span class="p">))</span>
+  <span class="p">(</span><span class="n">match</span> <span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="p">((</span><span class="n">IntPair</span> <span class="mi">7</span> <span class="mi">9</span><span class="p">)</span> <span class="mi">9</span><span class="p">)</span>
+    <span class="p">((</span><span class="n">IntPair</span> <span class="mi">8</span> <span class="n">a</span><span class="p">)</span> <span class="n">a</span><span class="p">)</span>
+    <span class="p">((</span><span class="n">IntPair</span> <span class="n">x</span> <span class="n">y</span><span class="p">)</span> <span class="p">(</span><span class="o">+</span> <span class="n">x</span> <span class="n">y</span><span class="p">))))</span>
 </pre></div>
 </div>
-<p>文法大致為：</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">struct</span><span class="p">{[</span><span class="nb">type</span> <span class="n">item</span><span class="p">]</span><span class="o">*</span><span class="p">}</span>
+<p>Sum Type 的用法：</p>
+<p>(Type OrigColor (U (Red)(Green)(Blue))) ; 三原色</p>
+<p>如果可以模式匹配，就變這樣：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">orig</span><span class="o">-</span><span class="n">color</span><span class="o">-</span><span class="n">to</span><span class="o">-</span><span class="nb">str</span> <span class="p">((</span><span class="n">OrigColor</span> <span class="n">x</span><span class="p">))</span>
+  <span class="p">(</span><span class="n">match</span> <span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="p">((</span><span class="n">Red</span><span class="p">)</span> <span class="s2">&quot;Red&quot;</span><span class="p">)</span>
+    <span class="p">((</span><span class="n">Green</span><span class="p">)</span> <span class="s2">&quot;Green&quot;</span><span class="p">)</span>
+    <span class="p">((</span><span class="n">Blue</span><span class="p">)</span> <span class="s2">&quot;Blue&quot;</span><span class="p">)))</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="id8">
-<h3>聯集<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
-<p>標籤聯合。使用 <cite>union</cite> 聯集型別。不可儲存閉包型別。</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">typedef</span> <span class="n">food</span> <span class="o">=</span> <span class="n">union</span><span class="p">{</span><span class="n">apple</span><span class="p">,</span> <span class="n">orange</span><span class="p">};</span>
-
-<span class="n">typedef</span> <span class="n">nil</span> <span class="o">=</span> <span class="n">struct</span><span class="p">;</span>
-
-<span class="n">typedef</span> <span class="n">cons_int</span> <span class="o">=</span> <span class="n">struct</span><span class="p">{</span>
-                     <span class="nb">int</span> <span class="n">head</span><span class="p">,</span>
-                     <span class="n">cons_int</span> <span class="n">tail</span><span class="p">};</span>
-
-<span class="n">typedef</span> <span class="n">list_int</span> <span class="o">=</span> <span class="n">union</span><span class="p">{</span><span class="n">cons_int</span><span class="p">,</span> <span class="n">nil</span><span class="p">};</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="section" id="id9">
-<h2>函數型別<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h2>
-<p>定義以下兩個型別僅為函數定義中使用：</p>
-<ul class="simple">
-<li><p><cite>any</cite>：指任何**非閉包**簡單型別及任何 <cite>struct</cite> 與 <cite>union</cite> 型別，參數化多態使用。</p></li>
-<li><p><cite>void</cite>：用於函數輸入與返回值，表不輸入或返回。</p></li>
-</ul>
-<p>函數型別定義如下：</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">basic_type</span> <span class="o">=</span> <span class="n">simple_type</span> <span class="o">|</span> <span class="n">union_type</span> <span class="o">|</span> <span class="n">struct_type</span>
-
-<span class="n">simple_fun_type</span> <span class="o">=</span> <span class="p">(</span><span class="o">-&gt;</span> <span class="nb">input</span> <span class="n">output</span><span class="p">)</span>
-
-<span class="n">input_type</span> <span class="o">=</span> <span class="n">input_type_simple</span> <span class="o">|</span> <span class="p">(</span><span class="n">input_type_simple</span> <span class="n">input_type_simple</span><span class="o">+</span><span class="p">)</span> <span class="o">|</span> <span class="n">void</span>
-
-<span class="n">input_type_simple</span> <span class="o">=</span> <span class="n">basic_type</span> <span class="o">|</span> <span class="n">simple_fun_type</span>
-
-<span class="n">output_type</span> <span class="o">=</span> <span class="n">input_type_simple</span> <span class="o">|</span> <span class="n">void</span>
-
-
-
-<span class="n">overload_type</span> <span class="o">=</span> <span class="p">(</span><span class="n">typeof</span> <span class="n">simple_fun_type</span><span class="o">+</span><span class="p">)</span>
-
-
-
-<span class="n">para_type</span> <span class="o">=</span> <span class="p">(</span><span class="n">para</span> <span class="p">((</span><span class="n">type_var</span><span class="o">+</span><span class="p">)</span> <span class="ow">in</span> <span class="n">set_type</span><span class="p">)</span> <span class="p">(</span><span class="o">-&gt;</span> <span class="n">para_input_type</span> <span class="n">para_output_type</span><span class="p">))</span>
-
-<span class="n">set_type</span> <span class="o">=</span> <span class="n">basic_type</span> <span class="o">|</span> <span class="nb">any</span>
-
-
-
-<span class="n">para_input_type_simple</span> <span class="o">=</span> <span class="n">input_type_simple</span> <span class="o">|</span> <span class="n">type_var</span>
-
-<span class="n">para_input_type</span> <span class="o">=</span> <span class="n">para_input_type_simple</span> <span class="o">|</span> <span class="p">(</span><span class="n">para_input_type_simple</span> <span class="n">para_input_type_simple</span><span class="o">+</span><span class="p">)</span> <span class="o">|</span> <span class="n">void</span>
-
-<span class="n">para_output_type</span> <span class="o">=</span> <span class="n">output_type</span> <span class="o">|</span> <span class="n">type_var</span>
-</pre></div>
 </div>
 </div>
 </div>
@@ -278,7 +248,7 @@
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
       
-        <a href="基本函數介紹.html" class="btn btn-neutral float-left" title="基本函數介紹" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="%E5%9F%BA%E6%9C%AC%E5%87%BD%E6%95%B8%E4%BB%8B%E7%B4%B9.html" class="btn btn-neutral float-left" title="基本函數介紹" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -287,11 +257,19 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2019, Yoxem Chen
+        
+        &copy; Copyright 2020, Yoxem Chen
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -302,7 +280,6 @@
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

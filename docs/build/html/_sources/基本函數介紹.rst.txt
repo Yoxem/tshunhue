@@ -5,163 +5,100 @@
 四則運算
 =============
 
-.. function :: + : lhs + rhs
+.. function :: + : (-> int int int)
 
-將 lhs（左值）與 rhs（右值）相加，得到回傳值。型別轉換 table：
-
-
-+--------+--------+----------------+
-| lhs    | rhs    | return val     |
-+========+========+================+
-| p_int  | p_int  | p_int          |
-+--------+--------+----------------+
-| p_int  | n_int  | int            |
-+--------+--------+----------------+
-| p_int  | z_int  | p_int          |
-+--------+--------+----------------+
-| p_int  | int    | int            |
-+--------+--------+----------------+
-| n_int  | n_int  | n_int          |
-+--------+--------+----------------+
-| n_int  | p_int  | int            |
-+--------+--------+----------------+
-| n_int  | z_int  | n_int          |
-+--------+--------+----------------+
-| n_int  | int    | int            |
-+--------+--------+----------------+
-| z_int  | p_int  | p_int          |
-+--------+--------+----------------+
-| z_int  | n_int  | n_int          |
-+--------+--------+----------------+
-| z_int  | z_int  | z_int          |
-+--------+--------+----------------+
-| z_int  | int    | int            |
-+--------+--------+----------------+
-| int    | n_int  | int            |
-+--------+--------+----------------+
-| int    | p_int  | int            |
-+--------+--------+----------------+
-| int    | z_int  | int            |
-+--------+--------+----------------+
-| int    | int    | int            |
-+--------+--------+----------------+
-| dou    | dou    | dou            |
-+--------+--------+----------------+
-
-.. function :: - : lhs - rhs
-
-將 lhs（左值）與 rhs（右值）相減，得到回傳值。型別轉換 table：
+整數相加。
 
 
-+--------+--------+----------------+
-| lhs    | rhs    | return val     |
-+========+========+================+
-| p_int  | p_int  | int            |
-+--------+--------+----------------+
-| p_int  | n_int  | p_int          |
-+--------+--------+----------------+
-| p_int  | z_int  | p_int          |
-+--------+--------+----------------+
-| p_int  | int    | int            |
-+--------+--------+----------------+
-| n_int  | n_int  | int            |
-+--------+--------+----------------+
-| n_int  | p_int  | n_int          |
-+--------+--------+----------------+
-| n_int  | z_int  | n_int          |
-+--------+--------+----------------+
-| n_int  | int    | int            |
-+--------+--------+----------------+
-| z_int  | p_int  | n_int          |
-+--------+--------+----------------+
-| z_int  | n_int  | p_int          |
-+--------+--------+----------------+
-| z_int  | z_int  | z_int          |
-+--------+--------+----------------+
-| z_int  | int    | int            |
-+--------+--------+----------------+
-| int    | n_int  | int            |
-+--------+--------+----------------+
-| int    | p_int  | int            |
-+--------+--------+----------------+
-| int    | z_int  | int            |
-+--------+--------+----------------+
-| int    | int    | int            |
-+--------+--------+----------------+
-| dou    | dou    | dou            |
-+--------+--------+----------------+
+.. function :: - : (-> int int int)
+
+整數相減。
 
 
-.. function :: - : lhs * rhs
+.. function :: * : (-> int int int)
 
-將 lhs（左值）與 rhs（右值）相乘，得到回傳值。型別轉換 table：
+整數相乘。
+
+.. function :: / : (-> int int int)
+
+整數相除，得商數。除以 0 的時候跳出特例，中止程式。如果用 C 語言表示的話：
+
+::
+
+  static jmp_buf buf;
+  ...
+  void int_div_closure_thunk(Object* closure, Object* lhs, Object* rhs, Object* result){
+    if (lhs->value==0){
+        printf("Exception: Div 0 Error.");
+        longjmp(buf,1);
+    }
+  
+  }
+  ...
+  int main(void){
+    int jmpVal = setjmp(buf);
+    if (jmpVal == 0){
+    // main_body
+    }else{
+    // exit the program with the exception
+    printf("Exit the program with the exception");
+    }
+  }
+
+.. function :: +. : (-> dou dou dou)
+
+浮點數相加。
+
+.. function :: -. : (-> dou dou dou)
+
+浮點數相減。
+
+.. function :: *. : (-> dou dou dou)
+
+浮點數相乘。
+
+.. function :: /. : (-> dou dou dou)
+
+浮點數相除。
 
 
-+--------+--------+----------------+
-| lhs    | rhs    | return val     |
-+========+========+================+
-| p_int  | p_int  | p_int          |
-+--------+--------+----------------+
-| p_int  | n_int  | n_int          |
-+--------+--------+----------------+
-| p_int  | z_int  | z_int          |
-+--------+--------+----------------+
-| p_int  | int    | int            |
-+--------+--------+----------------+
-| n_int  | n_int  | p_int          |
-+--------+--------+----------------+
-| n_int  | p_int  | n_int          |
-+--------+--------+----------------+
-| n_int  | z_int  | z_int          |
-+--------+--------+----------------+
-| n_int  | int    | int            |
-+--------+--------+----------------+
-| z_int  | p_int  | z_int          |
-+--------+--------+----------------+
-| z_int  | n_int  | z_int          |
-+--------+--------+----------------+
-| z_int  | z_int  | z_int          |
-+--------+--------+----------------+
-| z_int  | int    | z_int          |
-+--------+--------+----------------+
-| int    | n_int  | int            |
-+--------+--------+----------------+
-| int    | p_int  | int            |
-+--------+--------+----------------+
-| int    | z_int  | z_int          |
-+--------+--------+----------------+
-| int    | int    | int            |
-+--------+--------+----------------+
-| dou    | dou    | dou            |
-+--------+--------+----------------+
+布爾值
+============
 
-.. function :: / : lhs * rhs
+.. function :: and : (-> bool bool bool)
 
-將 lhs（左值）與 rhs（右值）相乘，得到回傳值。型別轉換 table：
+AND。
 
-.. note :: rhs 只能為 p_int、n_int，或 dou，**不可為 z_int 或 int**。
 
-+--------+--------+----------------+
-| lhs    | rhs    | return val     |
-+========+========+================+
-| p_int  | p_int  | p_int          |
-+--------+--------+----------------+
-| p_int  | n_int  | n_int          |
-+--------+--------+----------------+
-| n_int  | n_int  | p_int          |
-+--------+--------+----------------+
-| n_int  | p_int  | n_int          |
-+--------+--------+----------------+
-| z_int  | p_int  | z_int          |
-+--------+--------+----------------+
-| z_int  | n_int  | z_int          |
-+--------+--------+----------------+
-| int    | n_int  | int            |
-+--------+--------+----------------+
-| int    | p_int  | int            |
-+--------+--------+----------------+
-| dou    | dou    | dou            |
-+--------+--------+----------------+
+.. function :: or : (-> bool bool bool)
+
+OR。
+
+.. function :: not : (-> bool bool)
+
+NOT。
+
+流程控制
+============
+.. function :: (if cond then alt)
+
+若 cond 為真則返回 then，否則返回 alt。
+
+影印字元
+=============
+
+.. function :: print-str : (-> str void)
+
+列印字串。``void`` 表示不返回任何東西。 
+
+.. function :: int-to-str : (-> int str)
+
+整數轉成十進位字串（10 為 base）。
+
+.. function :: dou-to-str : (-> int str)
+
+浮點數轉成十進位字串（10 為 base）。
+
 
 定義變數 (=)
 =============
@@ -174,25 +111,21 @@
 
 ::
 
-  Type var_name = value; #非函數
+  (def Type var expression)
 
 例如：
 
 ::
 
-  p_int x = 9; # 定義正整數
+    (def int a 10)
+    (def dou b (+ 3.1 7.0))
   
-  dou pi = 3.1416; # 定義浮點數值
-
-  dou z = pi; # 設定值
-
-  int x = lambda(int x){return x + 1;}(8); # 8 + 1 = 9 
 
 
 
 ..note ::
 
-  因為 tshunhue 裡面，所有變數都是不可變物件， ``=`` 不可以拿來重新設定值。定義閉包也一樣。
+  因為 tshunhue 裡面，所有變數都是不可變物件， ``define`` 不可以拿來重新設定值。定義閉包也一樣。
 
 
 函數（閉包）
@@ -204,99 +137,27 @@
 
 ::
 
-  type_of_function
-  fn_var = lambda(x1 [,...]){*body*};
-
-
-通常 type_of_function（函數型別）與 fn_var（函數名）要換行。不換行空白也行，如`(-> int int) id_int = lambda(x){return x;};`。
-
-基本函數定義：
-
-::
-
-  '''單引數函數'''
-  (-> int int)
-  id_int = lambda(x){return x;};
-
-  '''雙引數函數'''
-  (-> (int int) int) # 兩個以上引數要加括號 ()
-  custom_add = lambda(x, y){return x + y;};
-
-
-多載函數如下定義：
-
-::
-
-   overload fn_var = [
-    type_of_fn1 lambda(arg1, *...*){body1},
-    type_of_fn2 lambda(arg2, *...*){body2}*, ...*];
-
-
-::    
-
-  '''type of the function:
-  (caseof
-      (-> int int)
-      (-> dou dou)
-  )
-  '''
-  overload custom_overload_id = [(-> int int)
-                            lambda(x)
-                            {return x;},
-                            (-> dou dou)
-                            lambda(x)
-                            {return x;}];
-
-參數化多型函數如下定義：
-::
-
-  (para_fun ((a [, ...]) in type) type_of_fun)
-
-  fn = lambda(arg [,...]){body};
-
-  # 或是
-
-  (para_fun ((a [, ...]) in any) type_of_fun)
-
-  fn = lambda(arg [,...]){body}; # any: 任意非閉包型別
-
-例如
-
-::
-
-  (para_fun ((a) in any) (-> a a))
-  para_poly_id = lambda(x){return x};
-
-參數化多態不支援將閉包型別參數化。如果需要參數化，需要用 struct 包起來。
-
-匿名函數
-============
-
-
-.. function ::  lambda(Type x1){ block }
-               lambda(Type1 x1, Type2 x2, ...){ block }
-
-匿名函數 lambda，輸入時需強制標示型別（除非用於定義非多載函數的時候）。輸出如 block。除非不返回回傳值，否則一律要加 return 標示回傳值。
-
-有關於函數定義，請參考 :ref:`定義函數<defining-lambda>`。
-
-事例如下：
-::
-
-  block = expressions+; return expression;
+  (def Type var lambda-function)
 
 例如：
 
 ::
 
-  lambda(int x){
-    return x + 4;
-  };
+  (def (-> int int) int-add1 (\ ((int x)) (+ x 1)))
+  (def (-> dou dou dou) sqrt-sum (\ ((dou x)(dou y)) (+. (*. x x) (*. y y))))
 
-  # 不傳回值
-  lambda(int x){
-    print(x);
-  };
+匿名函數 (lambda function)
+==============================
+
+定義：
+
+
+.. function ::   (\ () body+)
+
+.. function ::  (\ ((Type var)) body+)
+
+.. function ::   (\ ((Type1 var1)(Type2 var2)[...]*) body+)
+
 
 所有函數都是第一類物件與閉包，用 lexical scope 保存前文變數。
 

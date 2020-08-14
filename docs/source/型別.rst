@@ -8,13 +8,7 @@
 數字
 -------------
 
-* `int`：整數，初期可用 64 位元帶符號整數處理，之後可用任意精度整數處理。
-
-  - `p_int`：正整數
-    
-  - `n_int`：負整數
-    
-  - `z_int`：零整數
+* `int`：整數，初期可用 64 位元帶符號整數處理。
     
 * `dou`：雙精度浮點數
 
@@ -22,98 +16,56 @@
 -------------
 * `str`：字串
 
-..note :: 無 char 型別
-
+暫不支援 `char`。
 
 布林
 ------------
-* `bool`：布林值。true：真值，false：假值。
+* `bool`：布林值。#t：真值，#f：假值。
 
 複雜型別
-=============
+============
 
-可以 `typedef` 自定義 struct（結構）與 union 型別。
-
-
-結構
+自訂型別
 ------------
-類似 Scheme 的紀錄 (record)。可儲存閉包型別。
+可以自訂 product type 或 sum type。為求簡化，不支援型別當參數。
 
-不支援型別模板 `struct<a>{...}` 這種的。
+.. function :: (Type TYPE-NAME (Type-constronctor x1 x2 ...))
 
-::
+.. function :: (Type TYPE-NAME (U (Type-const1 x1 x2 ...)(Type-const2 x1 x2 ...)...))
 
-  typedef human = struct{str name, int age};
+.. function :: (Type TYPE-NAME (Type-constronctor))
 
-  human jack = human{name="Jack", age=32};
+.. function :: (Type TYPE-NAME (U (Type-const1)(Type-const2)...))
 
-可定義空 struct：
+U 是 union 的意思，指 Sum Type。
 
-::
-
-  typedef nil = struct {}; # 空型別
-
-
-文法大致為：
+例如：
 
 ::
 
-  struct{[type item]*}
+  (Type IntPair (IntPair Int Int))
 
 
-聯集
------------------
-標籤聯合。使用 `union` 聯集型別。不可儲存閉包型別。
+如果可以模式匹配，就變這樣：
 
 ::
 
-  typedef food = union{apple, orange};
-  
-  typedef nil = struct;
-  
-  typedef cons_int = struct{
-                       int head,
-                       cons_int tail};
-  
-  typedef list_int = union{cons_int, nil};
+  (\ ((IntPair x))
+    (match (x)
+      ((IntPair 7 9) 9)
+      ((IntPair 8 a) a)
+      ((IntPair x y) (+ x y))))
 
+Sum Type 的用法：
 
-函數型別
-================
+(Type OrigColor (U (Red)(Green)(Blue))) ; 三原色
 
-定義以下兩個型別僅為函數定義中使用：
-
-* `any`：指任何**非閉包**簡單型別及任何 `struct` 與 `union` 型別，參數化多態使用。
-* `void`：用於函數輸入與返回值，表不輸入或返回。
-
-函數型別定義如下：
+如果可以模式匹配，就變這樣：
 
 ::
 
-  basic_type = simple_type | union_type | struct_type
-  
-  simple_fun_type = (-> input output)
-  
-  input_type = input_type_simple | (input_type_simple input_type_simple+) | void
-  
-  input_type_simple = basic_type | simple_fun_type
-  
-  output_type = input_type_simple | void
-  
-  
-  
-  overload_type = (typeof simple_fun_type+)
-  
-  
-  
-  para_type = (para ((type_var+) in set_type) (-> para_input_type para_output_type))
-  
-  set_type = basic_type | any
-  
-  
-  
-  para_input_type_simple = input_type_simple | type_var
-  
-  para_input_type = para_input_type_simple | (para_input_type_simple para_input_type_simple+) | void
-  
-  para_output_type = output_type | type_var
+  (orig-color-to-str ((OrigColor x))
+    (match (x)
+      ((Red) "Red")
+      ((Green) "Green")
+      ((Blue) "Blue")))

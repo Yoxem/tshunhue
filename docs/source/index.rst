@@ -9,7 +9,7 @@ Welcome to Tshunhue Documents's documentation!
 .. toctree::
    :maxdepth: 3
    :caption: Contents
-    
+   
    基本函數介紹
    型別
 
@@ -22,19 +22,49 @@ Indices and tables
 * :ref:`search`
 
 
-其他
+Tshunhue 是什麼呢？
 ===================
+Tshunhue（河洛語：春花）是一個 Lisp 系的玩具程式語言。主要的特徵有：
 
-* 垃圾回收採用引用記數法 `./GarbageCollection/`，用哈希表紀錄，待完成。
+ - 不可變物件。
+ - 閉包作為第一類物件。
+ - 靜態型別。
+ - 和型別 (Sum Type) 和積型別 (Product Type)。
 
-採用引用計數法，使用不可變物件的概念，使用 table 紀錄位址引用次數。
 
-函數區塊 call variable 則 count + 1；函數區塊執行結束則 count - 1。變數指定的位址改變時，`a = count[old_ptr]; count[old_ptr] = 0; count[new_ptr] = a`。
+其他
+============
 
+垃圾回收
+------------
 
-* 型別判定使用合一演算法
-* 遞迴下降分析
-* llvmlite 輸出 LLVM IR。
+先不實現垃圾回收。若是要實現垃圾回收，可以用引用記數。做一個這樣的表格：
+
++------------+------------+
+| 記憶體位址 |   引用次數 |
++------------+------------+
+| 0x12345    | 1          |
+|            |            |
+| ……         | ……         |
++------------+------------+
+
+以下有一個範例：
+
+::
+
+  (Type IntPair (IntPair Int Int))
+  (def IntPair a (IntPair x y))
+  
+  ; 這個時候我們可以呼叫引用計數增加函數 inc_ref_count()
+  ; inc_ref_count(&a);
+  ; inc_ref_count(&x);
+  ; inc_ref_count(&y);
+  ...程式碼
+  ; x 活著的程式碼區段結束時，呼叫引用記數減少函數 dec_ref_count()
+  ; dec_ref_count(&a);
+  ; dec_ref_count(&a[0]); // &x
+  ; dec_ref_count(&a[1]); // &y
+
 
 實做方式
 ------------
