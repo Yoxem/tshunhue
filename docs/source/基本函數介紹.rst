@@ -91,6 +91,9 @@ NOT。
 
 列印字串。``void`` 表示不返回任何東西。 
 
+字串操作
+=============
+
 .. function :: int-to-str : (-> int str)
 
 整數轉成十進位字串（10 為 base）。
@@ -99,6 +102,9 @@ NOT。
 
 浮點數轉成十進位字串（10 為 base）。
 
+.. function :: str-concat : (-> str str str)
+
+結合字串。
 
 定義變數 (=)
 =============
