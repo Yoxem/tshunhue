@@ -6,12 +6,7 @@
 Welcome to Tshunhue Documents's documentation!
 ==============================================
 
-.. toctree::
-   :maxdepth: 3
-   :caption: Contents
-   
-   基本函數介紹
-   型別
+
 
 
 Indices and tables
@@ -87,3 +82,11 @@ Todo
 * llvmlite
 * python3
 
+其他內容
+=========
+.. toctree::
+   :maxdepth: 3
+   :caption: Contents
+   
+   基本函數介紹
+   型別

@@ -152,11 +152,11 @@ NOT。
 定義：
 
 
-.. function ::   (\ () body+)
+.. function ::   (\\ () body+)
 
-.. function ::  (\ ((Type var)) body+)
+.. function ::  (\\ ((Type var)) body+)
 
-.. function ::   (\ ((Type1 var1)(Type2 var2)[...]*) body+)
+.. function ::   (\\ ((Type1 var1)(Type2 var2)[...]*) body+)
 
 
 所有函數都是第一類物件與閉包，用 lexical scope 保存前文變數。
